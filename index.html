@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShareG | Campo de Guasca</title>
+    <meta name="description" content="Conoce la agricultura de Guasca, Cundinamarca: su territorio, sus cultivos y cómo ShareG conecta a los pequeños productores con compradores directos.">
+    <meta name="theme-color" content="#2e6f40">
+    <meta property="og:title" content="ShareG | Campo de Guasca">
+    <meta property="og:description" content="Conectando la cosecha de Guasca con el mercado adecuado.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="img/logo.png">
+
+    <link rel="icon" type="image/png" href="img/favicon.png">
+
+    <!-- Fuentes de Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Aplica el tema guardado antes de pintar, para evitar parpadeo -->
+    <script>
+        try {
+            document.documentElement.dataset.theme = localStorage.getItem('tema')
+                || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        } catch (e) {}
+    </script>
+
+    <link rel="stylesheet" href="css/ShareG.css">
+    <script src="js/ShareG.js" defer></script>
+</head>
+<body>
+    <a href="#contenido" class="saltar-contenido">Saltar al contenido</a>
+
+    <!-- Iconos reutilizables -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="sprite" width="0" height="0" aria-hidden="true">
+        <symbol id="i-whatsapp" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.012 2C6.486 2 2 6.479 2 12.006c0 1.91.535 3.694 1.46 5.218L2 22l4.908-1.424a9.97 9.97 0 005.104 1.435c5.526 0 10.012-4.479 10.012-10.005C22.024 6.479 17.538 2 12.012 2zm.006 18.156a8.13 8.13 0 01-4.148-1.135l-.297-.176-3.084.895.828-2.998-.194-.312a8.125 8.125 0 01-1.282-4.424c0-4.498 3.66-8.156 8.165-8.156 4.505 0 8.165 3.658 8.165 8.156 0 4.498-3.66 8.156-8.165 8.156z"/>
+        </symbol>
+        <symbol id="i-buscar" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+        </symbol>
+        <symbol id="i-alerta" viewBox="0 0 24 24">
+            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>
+        </symbol>
+        <symbol id="i-megafono" viewBox="0 0 24 24">
+            <path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>
+        </symbol>
+        <symbol id="i-personas" viewBox="0 0 24 24">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </symbol>
+        <symbol id="i-crecimiento" viewBox="0 0 24 24">
+            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+        </symbol>
+        <symbol id="i-luna" viewBox="0 0 24 24">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+        </symbol>
+        <symbol id="i-sol" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+        </symbol>
+        <symbol id="i-flecha-arriba" viewBox="0 0 24 24">
+            <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
+        </symbol>
+        <symbol id="i-objetivo" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+        </symbol>
+        <symbol id="i-ojo" viewBox="0 0 24 24">
+            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+        </symbol>
+        <symbol id="i-gota" viewBox="0 0 24 24">
+            <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>
+        </symbol>
+        <symbol id="i-brote" viewBox="0 0 24 24">
+            <path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/>
+        </symbol>
+        <symbol id="i-hoja" viewBox="0 0 24 24">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+        </symbol>
+    </svg>
+
+    <!-- Fondo animado -->
+    <div class="fondo-animado" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- Encabezado y Navegación -->
+    <header class="navbar">
+        <a href="#inicio" class="logo">
+            <img src="img/logo.png" alt="" class="logo-img" width="56" height="56">
+            <span>ShareG</span>
+        </a>
+        <button class="tema-toggle" type="button" aria-label="Activar modo oscuro">
+            <svg class="icono icono-luna" aria-hidden="true"><use href="#i-luna"/></svg>
+            <svg class="icono icono-sol" aria-hidden="true"><use href="#i-sol"/></svg>
+        </button>
+        <button class="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu-principal">
+            <span></span><span></span><span></span>
+        </button>
+        <nav id="menu-principal" aria-label="Principal">
+            <ul>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#territorio">El Territorio</a></li>
+                <li><a href="#problematica">La Problemática</a></li>
+                <li><a href="#productos">Productos</a></li>
+                <li><a href="#solucion">Nuestra Propuesta</a></li>
+                <li><a href="#mision-vision">Misión y Visión</a></li>
+                <li><a href="#preguntas">Preguntas</a></li>
+                <li><a href="https://chat.whatsapp.com/LGuBJ5SuSjS8ajVEAhj6xT" target="_blank" rel="noopener noreferrer" class="btn-nav">Unirse al Grupo</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="contenido">
+        <!-- Sección Hero / Inicio -->
+        <section id="inicio" class="hero">
+            <div class="hero-content">
+                <span class="badge">Vereda La Trinidad · Sector San Francisco</span>
+                <h1>Conectando la cosecha de Guasca con el mercado adecuado</h1>
+                <p>Damos valor agregado y visibilidad al trabajo de nuestros pequeños productores rurales para evitar pérdidas y fortalecer la economía campesina.</p>
+                <div class="hero-buttons">
+                    <a href="https://chat.whatsapp.com/LGuBJ5SuSjS8ajVEAhj6xT" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">
+                        <svg class="icono-btn" aria-hidden="true"><use href="#i-whatsapp"/></svg>
+                        Únete a la Comunidad en WhatsApp
+                    </a>
+                    <a href="#problematica" class="btn btn-secondary">Conocer la Causa</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- El territorio -->
+        <section id="territorio" class="section">
+            <div class="container">
+                <div class="section-title">
+                    <span class="eyebrow">El territorio</span>
+                    <h2>Guasca, tierra de clima frío y vocación agrícola</h2>
+                    <p>Conocer el lugar ayuda a entender el valor de lo que se cultiva en él.</p>
+                </div>
+
+                <div class="territorio">
+                    <div class="territorio-texto reveal">
+                        <p>Guasca es un municipio de la provincia del Guavio, en Cundinamarca, a unos 50 km al nororiente de Bogotá. Su casco urbano está a 2.710 metros sobre el nivel del mar y su temperatura promedio es de 13 °C.</p>
+                        <p>Ese clima frío de montaña favorece la papa, la zanahoria, la fresa, las flores de exportación y la ganadería de leche, que son la base de su economía rural.</p>
+                        <p>En la parte alta, por encima de los 3.000 metros, comienza el páramo: allí nace el agua que riega las veredas. Junto a los grandes cultivos de flores, buena parte de los alimentos los producen familias campesinas en parcelas pequeñas.</p>
+                    </div>
+
+                    <dl class="stats">
+                        <div class="stat reveal"><dt>Altitud</dt><dd>2.710 <small>m s. n. m.</small></dd></div>
+                        <div class="stat reveal"><dt>Temperatura promedio</dt><dd>13 <small>°C</small></dd></div>
+                        <div class="stat reveal"><dt>Distancia a Bogotá</dt><dd>≈ 50 <small>km</small></dd></div>
+                        <div class="stat reveal"><dt>Extensión</dt><dd>346 <small>km²</small></dd></div>
+                    </dl>
+                </div>
+                <p class="nota">Cifras de referencia del municipio; los valores son aproximados.</p>
+            </div>
+        </section>
+
+        <!-- La Problemática -->
+        <section id="problematica" class="section bg-foto bg-lagunas">
+            <div class="container">
+                <div class="section-title">
+                    <span class="eyebrow">La problemática</span>
+                    <h2>El Desafío Rural en Guasca</h2>
+                    <p>Producir alimentos de alta calidad no es suficiente si no logramos conectarlos con compradores dignos.</p>
+                </div>
+
+                <div class="problem-card reveal">
+                    <h3>El Problema Central</h3>
+                    <p>Los pequeños productores rurales de Guasca enfrentan dificultades para comercializar sus productos, comunicar su valor y conectarse con canales de venta estables.</p>
+                </div>
+
+                <div class="grid-2">
+                    <div class="box reveal">
+                        <h3><svg class="icono" aria-hidden="true"><use href="#i-buscar"/></svg> Causas Directas</h3>
+                        <ul>
+                            <li>Deficiente comunicación del valor agregado de los productos.</li>
+                            <li>Posicionamiento débil en el mercado local y regional.</li>
+                            <li>Acceso limitado a compradores y canales de venta estructurados.</li>
+                            <li>Desconexión constante entre la oferta agrícola y la demanda.</li>
+                        </ul>
+                    </div>
+
+                    <div class="box effects reveal">
+                        <h3><svg class="icono" aria-hidden="true"><use href="#i-alerta"/></svg> Consecuencias Directas</h3>
+                        <ul>
+                            <li>Excedentes de producción que se regalan, pierden o desechan.</li>
+                            <li>Pérdida de esfuerzo, tiempo e inversión de las familias campesinas.</li>
+                            <li>Reducción significativa de los ingresos familiares.</li>
+                            <li>Riesgo en la permanencia de las nuevas generaciones en el campo.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Productos de la Región -->
+        <section id="productos" class="section">
+            <div class="container">
+                <div class="section-title">
+                    <span class="eyebrow">Productos</span>
+                    <h2>Lo que produce Nuestra Tierra</h2>
+                    <p>Cultivos y actividades principales identificados en el sector San Francisco.</p>
+                </div>
+
+                <ul class="products-grid">
+                    <li class="product-item reveal">
+                        <span class="emoji" aria-hidden="true">🫐</span>
+                        <small>Fruta</small>
+                        <h3>Arándanos</h3>
+                        <p>Cultivo más reciente en la región, bien adaptado a la altura y de alto valor comercial.</p>
+                    </li>
+                    <li class="product-item reveal">
+                        <span class="emoji" aria-hidden="true">🍓</span>
+                        <small>Fruta</small>
+                        <h3>Fresa</h3>
+                        <p>Se cosecha de forma continua y es muy perecedera: necesita llegar rápido al comprador.</p>
+                    </li>
+                    <li class="product-item reveal">
+                        <span class="emoji" aria-hidden="true">🥛</span>
+                        <small>Lácteos</small>
+                        <h3>Ganadería y Derivados</h3>
+                        <p>Producción de leche y derivados como quesos y yogur, sustento diario de muchas familias.</p>
+                    </li>
+                    <li class="product-item reveal">
+                        <span class="emoji" aria-hidden="true">🌽</span>
+                        <small>Cereal</small>
+                        <h3>Maíz</h3>
+                        <p>Alimento tradicional de la cocina campesina, se aprovecha tierno como mazorca o seco en grano.</p>
+                    </li>
+                    <li class="product-item reveal">
+                        <span class="emoji" aria-hidden="true">🥔</span>
+                        <small>Tubérculo</small>
+                        <h3>Papa</h3>
+                        <p>Cultivo tradicional del clima frío y base de la alimentación y la economía campesina de la zona.</p>
+                    </li>
+                    <li class="product-item reveal">
+                        <span class="emoji" aria-hidden="true">🟡</span>
+                        <small>Fruta andina</small>
+                        <h3>Uchuva</h3>
+                        <p>De sabor agridulce, se consume fresca y se aprovecha en mermeladas, salsas y postres.</p>
+                    </li>
+                    <li class="product-item reveal">
+                        <span class="emoji" aria-hidden="true">🥕</span>
+                        <small>Hortaliza</small>
+                        <h3>Zanahoria</h3>
+                        <p>Junto con la papa, uno de los principales productos agrícolas del municipio.</p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Propuesta / Solución Digital -->
+        <section id="solucion" class="section">
+            <div class="container">
+                <div class="section-title">
+                    <span class="eyebrow">Nuestra propuesta</span>
+                    <h2>Tecnología con Impacto Social</h2>
+                    <p>Ingeniería de software aplicada para responder a las necesidades reales de la comunidad.</p>
+                </div>
+
+                <div class="grid-3">
+                    <div class="card-feature reveal">
+                        <div class="icon"><svg class="icono" aria-hidden="true"><use href="#i-megafono"/></svg></div>
+                        <h3>Visibilidad Directa</h3>
+                        <p>Permite dar a conocer la oferta actual de la vereda, informando variedad, disponibilidad y tiempos de cosecha.</p>
+                    </div>
+                    <div class="card-feature reveal">
+                        <div class="icon"><svg class="icono" aria-hidden="true"><use href="#i-personas"/></svg></div>
+                        <h3>Conexión Sin Intermediarios</h3>
+                        <p>Facilita el contacto directo entre compradores, restaurantes, distribuidores y los productores.</p>
+                    </div>
+                    <div class="card-feature reveal">
+                        <div class="icon"><svg class="icono" aria-hidden="true"><use href="#i-crecimiento"/></svg></div>
+                        <h3>Valor Agregado</h3>
+                        <p>Comunica la historia, trazabilidad y dedicación detrás de cada cultivo fresco producido en Guasca.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Misión y Visión -->
+        <section id="mision-vision" class="section bg-foto bg-iglesia">
+            <div class="container">
+                <div class="section-title">
+                    <span class="eyebrow">Quiénes somos</span>
+                    <h2>Misión y Visión</h2>
+                    <p>Lo que nos mueve hoy y hacia dónde queremos llevar el proyecto.</p>
+                </div>
+
+                <div class="grid-2">
+                    <div class="box reveal">
+                        <h3><svg class="icono" aria-hidden="true"><use href="#i-objetivo"/></svg> Misión</h3>
+                        <p>Dar visibilidad a la producción de los pequeños agricultores de Guasca y conectarlos directamente con compradores, para que sus cosechas se vendan a tiempo, a un precio justo y sin pérdidas.</p>
+                    </div>
+                    <div class="box reveal">
+                        <h3><svg class="icono" aria-hidden="true"><use href="#i-ojo"/></svg> Visión</h3>
+                        <p>Ser la red de referencia de la economía campesina de Guasca: una comunidad donde cada familia productora tenga canales de venta estables y las nuevas generaciones encuentren razones para permanecer en el campo.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Agricultura y páramo -->
+        <section id="sostenibilidad" class="section">
+            <div class="container">
+                <div class="section-title">
+                    <span class="eyebrow">Campo y páramo</span>
+                    <h2>Una agricultura que cuida su origen</h2>
+                    <p>Producir en la montaña implica proteger el agua y el suelo de los que depende cada cosecha.</p>
+                </div>
+
+                <div class="grid-3">
+                    <div class="card-feature reveal">
+                        <div class="icon"><svg class="icono" aria-hidden="true"><use href="#i-gota"/></svg></div>
+                        <h3>El agua nace arriba</h3>
+                        <p>El páramo regula el agua que usan los cultivos, el ganado y los acueductos veredales. Cuidarlo es cuidar la producción.</p>
+                    </div>
+                    <div class="card-feature reveal">
+                        <div class="icon"><svg class="icono" aria-hidden="true"><use href="#i-brote"/></svg></div>
+                        <h3>Suelos que descansan</h3>
+                        <p>Rotar la papa con hortalizas o pastos ayuda a conservar la fertilidad del suelo y a reducir plagas y enfermedades.</p>
+                    </div>
+                    <div class="card-feature reveal">
+                        <div class="icon"><svg class="icono" aria-hidden="true"><use href="#i-hoja"/></svg></div>
+                        <h3>Cosechas que no se pierden</h3>
+                        <p>Cada alimento que se queda sin vender desperdicia también el agua, el suelo y el trabajo invertidos en producirlo.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Preguntas frecuentes -->
+        <section id="preguntas" class="section bg-foto bg-tractor">
+            <div class="container container-angosto">
+                <div class="section-title">
+                    <span class="eyebrow">Preguntas frecuentes</span>
+                    <h2>Cómo participar</h2>
+                </div>
+
+                <div class="faq">
+                    <details class="reveal">
+                        <summary>¿Qué es ShareG?</summary>
+                        <p>Es un proyecto de integración rural que da visibilidad a la oferta de los pequeños productores de Guasca y los pone en contacto directo con compradores.</p>
+                    </details>
+                    <details class="reveal">
+                        <summary>Soy productor, ¿cómo doy a conocer mi cosecha?</summary>
+                        <p>Únete al grupo de WhatsApp y comparte qué producto tienes, la cantidad disponible y la fecha de cosecha. La comunidad se encarga de difundirlo.</p>
+                    </details>
+                    <details class="reveal">
+                        <summary>Quiero comprar, ¿qué debo hacer?</summary>
+                        <p>En el grupo de WhatsApp se publican las ofertas vigentes. Desde allí puedes escribir directamente al productor y acordar cantidad, precio y entrega.</p>
+                    </details>
+                    <details class="reveal">
+                        <summary>¿De qué zona son los productos?</summary>
+                        <p>De la vereda La Trinidad, sector San Francisco, en el municipio de Guasca, Cundinamarca.</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- Llamado a la Acción / WhatsApp -->
+        <section id="contacto" class="cta-section">
+            <div class="container">
+                <h2>¿Quieres comercializar, comprar o apoyar el proyecto?</h2>
+                <p>Hemos creado una red directa en WhatsApp para comunicar ofertas, ponernos en contacto y construir soluciones comunitarias.</p>
+
+                <a href="https://chat.whatsapp.com/LGuBJ5SuSjS8ajVEAhj6xT" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp btn-grande">
+                    <svg class="icono-btn" aria-hidden="true"><use href="#i-whatsapp"/></svg>
+                    Unirse al Grupo de WhatsApp
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Botón para volver arriba -->
+    <button class="btn-subir" type="button" aria-label="Volver arriba">
+        <svg class="icono" aria-hidden="true"><use href="#i-flecha-arriba"/></svg>
+    </button>
+
+    <!-- Pie de página -->
+    <footer>
+        <div class="container">
+            <p><strong>ShareG — Proyecto de Integración Rural</strong> · Guasca, Cundinamarca</p>
+            <p>Desarrollado por <strong>Miguel Ángel Vega Rodríguez</strong> y <strong>Daniel Esteban Castaño Calvo</strong></p>
+        </div>
+    </footer>
+</body>
+</html>
