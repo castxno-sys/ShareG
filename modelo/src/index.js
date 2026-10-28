@@ -1,0 +1,13 @@
+export * from './modelo/enums.js';
+export { Usuario } from './modelo/Usuario.js';
+export { Productor } from './modelo/Productor.js';
+export { Comprador } from './modelo/Comprador.js';
+export { Administrador } from './modelo/Administrador.js';
+export { Producto } from './modelo/Producto.js';
+export { Oferta } from './modelo/Oferta.js';
+export { Pedido } from './modelo/Pedido.js';
+export { DetallePedido } from './modelo/DetallePedido.js';
+export { Pago } from './modelo/Pago.js';
+export { Entrega } from './modelo/Entrega.js';
+export { Calificacion } from './modelo/Calificacion.js';
+export { PlataformaShareG } from './modelo/PlataformaShareG.js';

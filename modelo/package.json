@@ -1,0 +1,11 @@
+{
+  "name": "shareg",
+  "version": "1.0.0",
+  "description": "share.G - Plataforma de comercialización para productores rurales de la vereda La Trinidad, Guasca (Cundinamarca)",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/main.js"
+  },
+  "license": "MIT"
+}

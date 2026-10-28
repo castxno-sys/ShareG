@@ -1,0 +1,99 @@
+digraph G {
+  graph [rankdir=TB, splines=polyline, nodesep=0.9, ranksep=1.0, fontname="Helvetica", bgcolor="white", label=<<B>share.G — Diagrama de Clases</B><BR/><FONT POINT-SIZE="11">Plataforma de comercialización para productores rurales · Vereda La Trinidad, Guasca</FONT>>, labelloc=t, fontsize=20, pad=0.4];
+  node [shape=plaintext, fontname="Helvetica", fontsize=10];
+  edge [fontname="Helvetica", fontsize=9, color="#333333"];
+
+  Usuario [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#EAF2E3">
+<TR><TD BGCOLOR="#5B8C3A"><FONT COLOR="white"><I>«abstract»</I><BR/><B>Usuario</B></FONT></TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT"># id : String<BR/># nombre : String<BR/># correo : String<BR/># telefono : String<BR/># contrasena : String<BR/># fechaRegistro : Date</TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT" BORDER="1" SIDES="T">+ iniciarSesion(correo : String, clave : String) : Boolean<BR/>+ actualizarPerfil(datos : Object) : void<BR/>+ getRol() : String</TD></TR></TABLE>>];
+
+  Productor [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#EAF2E3">
+<TR><TD BGCOLOR="#5B8C3A"><FONT COLOR="white"><B>Productor</B></FONT></TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT">- vereda : String<BR/>- sector : String<BR/>- verificado : Boolean<BR/>- ofertas : Oferta[]</TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT" BORDER="1" SIDES="T">+ publicarOferta(producto : Producto, cantidad : Number,<BR/>     unidad : Unidad, precio : Number, fecha : Date) : Oferta<BR/>+ aceptarPedido(pedido : Pedido) : void<BR/>+ rechazarPedido(pedido : Pedido) : void<BR/>+ calcularVentas() : Number</TD></TR></TABLE>>];
+
+  Comprador [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#EAF2E3">
+<TR><TD BGCOLOR="#5B8C3A"><FONT COLOR="white"><B>Comprador</B></FONT></TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT">- tipo : TipoComprador<BR/>- direccion : String<BR/>- pedidos : Pedido[]</TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT" BORDER="1" SIDES="T">+ crearPedido() : Pedido<BR/>+ pagar(pedido : Pedido, metodo : MetodoPago) : Pago<BR/>+ calificar(pedido : Pedido, puntaje : Number,<BR/>     comentario : String) : Calificacion</TD></TR></TABLE>>];
+
+  Administrador [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#EAF2E3">
+<TR><TD BGCOLOR="#5B8C3A"><FONT COLOR="white"><B>Administrador</B></FONT></TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT">- nivelAcceso : Number</TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT" BORDER="1" SIDES="T">+ verificarProductor(p : Productor) : void<BR/>+ generarReporte() : Object</TD></TR></TABLE>>];
+
+  Producto [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#FFF4E0">
+<TR><TD BGCOLOR="#D98E04"><FONT COLOR="white"><B>Producto</B></FONT></TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT">- id : String<BR/>- nombre : String<BR/>- categoria : Categoria<BR/>- perecedero : Boolean<BR/>- descripcion : String</TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT" BORDER="1" SIDES="T">+ diasVigenciaOferta() : Number</TD></TR></TABLE>>];
+
+  Oferta [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#FFF4E0">
+<TR><TD BGCOLOR="#D98E04"><FONT COLOR="white"><B>Oferta</B></FONT></TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT">- id : String<BR/>- productor : Productor<BR/>- producto : Producto<BR/>- cantidadDisponible : Number<BR/>- unidad : Unidad<BR/>- precioUnitario : Number<BR/>- fechaDisponible : Date<BR/>- estado : EstadoOferta</TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT" BORDER="1" SIDES="T">+ reservar(cantidad : Number) : void<BR/>+ estaVigente(hoy : Date) : Boolean<BR/>+ cerrar() : void</TD></TR></TABLE>>];
+
+  Pedido [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#E3EDF7">
+<TR><TD BGCOLOR="#2E6DA4"><FONT COLOR="white"><B>Pedido</B></FONT></TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT">- id : String<BR/>- comprador : Comprador<BR/>- fecha : Date<BR/>- detalles : DetallePedido[]<BR/>- estado : EstadoPedido<BR/>- pago : Pago<BR/>- entrega : Entrega<BR/>- calificacion : Calificacion</TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT" BORDER="1" SIDES="T">+ agregarDetalle(oferta : Oferta, cantidad : Number) : void<BR/>+ calcularTotal() : Number<BR/>+ cambiarEstado(nuevo : EstadoPedido) : void<BR/>+ cancelar() : void</TD></TR></TABLE>>];
+
+  DetallePedido [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#E3EDF7">
+<TR><TD BGCOLOR="#2E6DA4"><FONT COLOR="white"><B>DetallePedido</B></FONT></TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT">- oferta : Oferta<BR/>- cantidad : Number<BR/>- precioUnitario : Number</TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT" BORDER="1" SIDES="T">+ calcularSubtotal() : Number</TD></TR></TABLE>>];
+
+  Pago [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#E3EDF7">
+<TR><TD BGCOLOR="#2E6DA4"><FONT COLOR="white"><B>Pago</B></FONT></TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT">- id : String<BR/>- metodo : MetodoPago<BR/>- valor : Number<BR/>- fecha : Date<BR/>- aprobado : Boolean</TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT" BORDER="1" SIDES="T">+ procesar() : Boolean</TD></TR></TABLE>>];
+
+  Entrega [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#E3EDF7">
+<TR><TD BGCOLOR="#2E6DA4"><FONT COLOR="white"><B>Entrega</B></FONT></TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT">- id : String<BR/>- direccion : String<BR/>- fechaProgramada : Date<BR/>- transportador : String<BR/>- entregada : Boolean</TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT" BORDER="1" SIDES="T">+ confirmarEntrega() : void</TD></TR></TABLE>>];
+
+  Calificacion [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#E3EDF7">
+<TR><TD BGCOLOR="#2E6DA4"><FONT COLOR="white"><B>Calificacion</B></FONT></TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT">- puntaje : Number  {1..5}<BR/>- comentario : String<BR/>- fecha : Date</TD></TR></TABLE>>];
+
+  ShareG [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#F2F2F2">
+<TR><TD BGCOLOR="#444444"><FONT COLOR="white"><B>PlataformaShareG</B></FONT></TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT">- usuarios : Usuario[]<BR/>- productos : Producto[]<BR/>- ofertas : Oferta[]<BR/>- pedidos : Pedido[]</TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT" BORDER="1" SIDES="T">+ registrarUsuario(u : Usuario) : void<BR/>+ buscarOfertas(filtro : String) : Oferta[]<BR/>+ registrarPedido(p : Pedido) : void</TD></TR></TABLE>>];
+
+  Enums [label=<<TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#FAFAFA">
+<TR><TD BGCOLOR="#777777" COLSPAN="2"><FONT COLOR="white"><B>«enumeration»</B></FONT></TD></TR>
+<TR><TD ALIGN="LEFT"><B>Categoria</B></TD><TD ALIGN="LEFT">AGRICOLA, PECUARIO, TRANSFORMADO</TD></TR>
+<TR><TD ALIGN="LEFT"><B>Unidad</B></TD><TD ALIGN="LEFT">KG, BULTO, CANASTILLA, LITRO, UNIDAD</TD></TR>
+<TR><TD ALIGN="LEFT"><B>EstadoOferta</B></TD><TD ALIGN="LEFT">ACTIVA, AGOTADA, VENCIDA</TD></TR>
+<TR><TD ALIGN="LEFT"><B>EstadoPedido</B></TD><TD ALIGN="LEFT">CREADO, ACEPTADO, PAGADO, EN_ENTREGA,<BR ALIGN="LEFT"/>ENTREGADO, CALIFICADO, CANCELADO</TD></TR>
+<TR><TD ALIGN="LEFT"><B>TipoComprador</B></TD><TD ALIGN="LEFT">PERSONA, NEGOCIO</TD></TR>
+<TR><TD ALIGN="LEFT"><B>MetodoPago</B></TD><TD ALIGN="LEFT">EFECTIVO, PSE, NEQUI, TARJETA</TD></TR></TABLE>>];
+
+  {rank=same; ShareG; Usuario; Enums}
+  {rank=same; Productor; Comprador; Administrador}
+  {rank=same; Producto; Oferta; Pedido}
+  {rank=same; DetallePedido; Pago; Entrega; Calificacion}
+
+  // Herencia
+  Productor -> Usuario [arrowhead=onormal, arrowsize=1.3];
+  Comprador -> Usuario [arrowhead=onormal, arrowsize=1.3];
+  Administrador -> Usuario [arrowhead=onormal, arrowsize=1.3];
+
+  // Agregación plataforma
+  ShareG -> Usuario [dir=back, arrowtail=odiamond, arrowhead=none, headlabel="0..*", taillabel="1"];
+
+  // Asociaciones
+  Productor -> Oferta [arrowhead=vee, label=" publica ", taillabel="1", headlabel="0..*"];
+  Producto -> Oferta [dir=back, arrowtail=none, arrowhead=none, label=" se ofrece en ", taillabel="1", headlabel="0..*"];
+  Comprador -> Pedido [arrowhead=vee, label=" realiza ", taillabel="1", headlabel="0..*"];
+  Administrador -> Productor [style=dashed, arrowhead=vee, label=" «verifica» "];
+
+  // Composición
+  Pedido -> DetallePedido [dir=back, arrowtail=diamond, arrowhead=none, taillabel="1", headlabel="1..*"];
+  Pedido -> Pago [dir=back, arrowtail=diamond, arrowhead=none, taillabel="1", headlabel="0..1"];
+  Pedido -> Entrega [dir=back, arrowtail=diamond, arrowhead=none, taillabel="1", headlabel="0..1"];
+  Pedido -> Calificacion [dir=back, arrowtail=diamond, arrowhead=none, taillabel="1", headlabel="0..1"];
+  DetallePedido -> Oferta [arrowhead=vee, label=" referencia ", taillabel="0..*", headlabel="1"];
+}
