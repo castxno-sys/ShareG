@@ -1,0 +1,8 @@
+{
+  "name": "shareg-abstraccion",
+  "version": "1.0.0",
+  "description": "Pilar de POO: Abstracción — ejemplo de medios de pago en share.G",
+  "type": "module",
+  "scripts": { "start": "node src/main.js" },
+  "license": "MIT"
+}

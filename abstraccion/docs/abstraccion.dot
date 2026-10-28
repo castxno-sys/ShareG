@@ -1,0 +1,41 @@
+digraph G {
+  graph [rankdir=TB, splines=polyline, nodesep=0.7, ranksep=0.9, fontname="Helvetica", bgcolor="white",
+         label=<<B>Pilar de POO: Abstracción — Medios de pago en share.G</B><BR/><FONT POINT-SIZE="11">Diagrama de clases UML</FONT>>, labelloc=t, fontsize=18, pad=0.4];
+  node [shape=plaintext, fontname="Helvetica", fontsize=10];
+  edge [fontname="Helvetica", fontsize=9, color="#333333"];
+
+  Pedido [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" BGCOLOR="#E3EDF7">
+<TR><TD BGCOLOR="#2E6DA4"><FONT COLOR="white"><B>Pedido</B></FONT></TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT">+ comprador : String<BR/>+ items : Item[]<BR/>+ pagado : Boolean</TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT" BORDER="1" SIDES="T">+ agregarItem(producto : String, cantidad : Number, precio : Number) : void<BR/>+ calcularTotal() : Number<BR/>+ pagarCon(medio : MedioDePago) : Recibo</TD></TR></TABLE>>];
+
+  MedioDePago [label=<<TABLE BORDER="2" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" BGCOLOR="#EAF2E3">
+<TR><TD BGCOLOR="#5B8C3A"><FONT COLOR="white">«abstract»<BR/><B><I>MedioDePago</I></B></FONT></TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT">- pagosRealizados : Number<BR/>+ titular : String</TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT" BORDER="1" SIDES="T"><I>+ getNombre() : String</I><BR/><I>+ calcularComision(valor : Number) : Number</I><BR/><I>+ procesar(total : Number) : Boolean</I><BR/>+ pagar(valor : Number) : Recibo<BR/>+ «get» pagosRealizados : Number</TD></TR></TABLE>>];
+
+  Nequi [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" BGCOLOR="#FFF4E0">
+<TR><TD BGCOLOR="#D98E04"><FONT COLOR="white"><B>PagoNequi</B></FONT></TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT">+ celular : String</TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT" BORDER="1" SIDES="T">+ getNombre() : String<BR/>+ calcularComision(valor : Number) : Number<BR/>+ procesar(total : Number) : Boolean</TD></TR></TABLE>>];
+
+  PSE [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" BGCOLOR="#FFF4E0">
+<TR><TD BGCOLOR="#D98E04"><FONT COLOR="white"><B>PagoPSE</B></FONT></TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT">+ banco : String<BR/>+ saldo : Number</TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT" BORDER="1" SIDES="T">+ getNombre() : String<BR/>+ calcularComision(valor : Number) : Number<BR/>+ procesar(total : Number) : Boolean</TD></TR></TABLE>>];
+
+  Efectivo [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" BGCOLOR="#FFF4E0">
+<TR><TD BGCOLOR="#D98E04"><FONT COLOR="white"><B>PagoEfectivo</B></FONT></TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT">+ montoEntregado : Number<BR/>+ cambio : Number</TD></TR>
+<TR><TD ALIGN="LEFT" BALIGN="LEFT" BORDER="1" SIDES="T">+ getNombre() : String<BR/>+ calcularComision(valor : Number) : Number<BR/>+ procesar(total : Number) : Boolean</TD></TR></TABLE>>];
+
+  Nota [shape=note, style=filled, fillcolor="#FFFBE6", fontsize=9, label="Métodos en cursiva = abstractos:\nMedioDePago dice QUÉ se hace;\ncada subclase define CÓMO.\npagar() es concreto y común a todos."];
+
+  Pedido -> MedioDePago [style=dashed, arrowhead=vee, label="  «usa»  "];
+  Nequi -> MedioDePago [arrowhead=onormal, arrowsize=1.4];
+  PSE -> MedioDePago [arrowhead=onormal, arrowsize=1.4];
+  Efectivo -> MedioDePago [arrowhead=onormal, arrowsize=1.4];
+  Nota -> MedioDePago [style=dotted, arrowhead=none];
+  {rank=same; Pedido; MedioDePago; Nota}
+  {rank=same; Nequi; PSE; Efectivo}
+}

@@ -8,6 +8,10 @@ Proyecto de Ingeniería de Software — Universidad de La Salle.
 
 La página de la plataforma está en `index.html`, `css/`, `js/` e `img/`.
 
+## Pilares de POO
+
+- [Abstracción](abstraccion/): medios de pago (Nequi, PSE, efectivo)
+
 ## Diagrama de clases
 
 ![Diagrama de clases share.G](modelo/docs/diagrama_clases_shareG.png)
