@@ -53,3 +53,11 @@ Salida:
    ✅ Efectivo contra entrega: comisión $ 2.000 → total $ 153.000
 ❌ PagoIncompleto debe implementar calcularComision()
 ```
+
+## Integrantes
+
+- Daniel Esteban Castaño Calvo
+- Miguel Vega
+- Daniel Cortes
+- Dilan Correa
+- Tomás
