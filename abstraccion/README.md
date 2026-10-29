@@ -60,4 +60,4 @@ Salida:
 - Miguel Vega
 - Daniel Cortes
 - Dilan Correa
-- Tomás
+- Tomás García
