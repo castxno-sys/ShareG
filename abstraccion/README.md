@@ -8,6 +8,74 @@ En share.G un comprador puede pagar su pedido con **Nequi**, **PSE** o **efectiv
 
 ![Diagrama UML Abstracción](docs/diagrama_uml_abstraccion.png)
 
+## Código del diagrama UML
+
+El código fuente está en [`diagrama_uml.puml`](diagrama_uml.puml) (PlantUML). La misma versión en Mermaid, que GitHub dibuja automáticamente:
+
+```mermaid
+classDiagram
+    direction BT
+    class MedioDePago {
+        <<abstract>>
+        -Number pagosRealizados
+        +String titular
+        +getNombre()* String
+        +calcularComision(valor: Number)* Number
+        +procesar(total: Number)* Boolean
+        +pagar(valor: Number) Recibo
+    }
+    class PagoNequi {
+        +String celular
+        +getNombre() String
+        +calcularComision(valor: Number) Number
+        +procesar(total: Number) Boolean
+    }
+    class PagoPSE {
+        +String banco
+        +Number saldo
+        +getNombre() String
+        +calcularComision(valor: Number) Number
+        +procesar(total: Number) Boolean
+    }
+    class PagoEfectivo {
+        +Number montoEntregado
+        +Number cambio
+        +getNombre() String
+        +calcularComision(valor: Number) Number
+        +procesar(total: Number) Boolean
+    }
+    class Pedido {
+        +String comprador
+        +Item[] items
+        +Boolean pagado
+        +agregarItem(producto: String, cantidad: Number, precio: Number) void
+        +calcularTotal() Number
+        +pagarCon(medio: MedioDePago) Recibo
+    }
+    PagoNequi --|> MedioDePago
+    PagoPSE --|> MedioDePago
+    PagoEfectivo --|> MedioDePago
+    Pedido ..> MedioDePago : usa
+```
+
+## Ejemplo: 3 opciones de pago
+
+[`ejemplo_pagos.js`](ejemplo_pagos.js) es un solo archivo con todas las clases y un menú para escoger cómo pagar el pedido:
+
+```bash
+cd abstraccion
+node ejemplo_pagos.js
+```
+
+```
+¿Cómo desea pagar?
+   1. Nequi     (sin comisión)
+   2. PSE       (comisión 1,5 %)
+   3. Efectivo  (recargo $2.000)
+```
+
+Sin importar la opción, el pedido paga con la misma línea: `pedido.pagarCon(medio)`.
+
 ## Cómo se aplica la abstracción en JavaScript
 
 | Concepto | Implementación |
@@ -23,6 +91,8 @@ En share.G un comprador puede pagar su pedido con **Nequi**, **PSE** o **efectiv
 ```
 abstraccion/
 ├── package.json
+├── diagrama_uml.puml      # Código del diagrama UML (PlantUML)
+├── ejemplo_pagos.js        # Ejemplo con menú de 3 opciones de pago
 ├── docs/                   # Diagrama UML (PNG, SVG y fuente .dot)
 └── src/
     ├── main.js             # Demostración

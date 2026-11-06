@@ -1,0 +1,61 @@
+@startuml Abstraccion_shareG
+title Pilar de POO: Abstracción — Medios de pago en share.G
+
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #FFF4E0
+  BorderColor #333333
+}
+
+abstract class MedioDePago {
+  - pagosRealizados : Number
+  + titular : String
+  + {abstract} getNombre() : String
+  + {abstract} calcularComision(valor : Number) : Number
+  + {abstract} procesar(total : Number) : Boolean
+  + pagar(valor : Number) : Recibo
+}
+
+class PagoNequi {
+  + celular : String
+  + getNombre() : String
+  + calcularComision(valor : Number) : Number
+  + procesar(total : Number) : Boolean
+}
+
+class PagoPSE {
+  + banco : String
+  + saldo : Number
+  + getNombre() : String
+  + calcularComision(valor : Number) : Number
+  + procesar(total : Number) : Boolean
+}
+
+class PagoEfectivo {
+  + montoEntregado : Number
+  + cambio : Number
+  + getNombre() : String
+  + calcularComision(valor : Number) : Number
+  + procesar(total : Number) : Boolean
+}
+
+class Pedido {
+  + comprador : String
+  + items : Item[]
+  + pagado : Boolean
+  + agregarItem(producto : String, cantidad : Number, precio : Number) : void
+  + calcularTotal() : Number
+  + pagarCon(medio : MedioDePago) : Recibo
+}
+
+MedioDePago <|-- PagoNequi
+MedioDePago <|-- PagoPSE
+MedioDePago <|-- PagoEfectivo
+Pedido ..> MedioDePago : <<usa>>
+
+note right of MedioDePago
+  Métodos {abstract}: dicen QUÉ se hace.
+  Cada subclase define CÓMO.
+  pagar() es concreto y común a todos.
+end note
+@enduml
