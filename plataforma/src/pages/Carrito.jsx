@@ -73,9 +73,9 @@ export default function Carrito() {
               </div>
               <div className="cart__controls">
                 <div className="qty qty--sm">
-                  <button onClick={() => cambiarCantidad(i.id, i.cantidad - 1)} aria-label="Menos"><Icon name="minus" size={16} /></button>
+                  <button onClick={() => cambiarCantidad(i.id, -1)} aria-label="Menos"><Icon name="minus" size={16} /></button>
                   <span>{i.cantidad}</span>
-                  <button onClick={() => cambiarCantidad(i.id, i.cantidad + 1)} aria-label="Más"><Icon name="plus" size={16} /></button>
+                  <button onClick={() => cambiarCantidad(i.id, 1)} aria-label="Más"><Icon name="plus" size={16} /></button>
                 </div>
                 <strong className="cart__sub">{pesos(i.precio * i.cantidad)}</strong>
                 <button className="icon-btn icon-btn--danger" onClick={() => quitar(i.id)} aria-label={`Quitar ${i.nombre}`} title="Quitar">

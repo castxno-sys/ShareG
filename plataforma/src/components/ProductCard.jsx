@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext.jsx';
 import { useUI } from '../context/UIContext.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 import { pesos, IMG_DEFECTO } from '../utils/formato.js';
 import Calificacion from './Calificacion.jsx';
 import Icon from './Icon.jsx';
@@ -9,7 +10,9 @@ import Icon from './Icon.jsx';
 export default function ProductCard({ producto }) {
   const { agregar } = useCart();
   const { toast } = useUI();
+  const { user } = useAuth();
   const [agregado, setAgregado] = useState(false);
+  const esMio = user?.id === producto.productor_id;
   const agotado = Number(producto.stock) <= 0;
   const pocos = !agotado && Number(producto.stock) <= 25;
 
@@ -35,6 +38,9 @@ export default function ProductCard({ producto }) {
         <p className="product__farmer"><Icon name="leaf" size={14} /> {producto.productor_nombre}</p>
         <div className="product__foot">
           <p className="price">{pesos(producto.precio)}<small>/{producto.unidad}</small></p>
+          {esMio ? (
+            <Link to={`/panel/producto/${producto.id}`} className="btn btn--sm btn--outline product__add"><Icon name="edit" size={16} /> <span>Editar</span></Link>
+          ) : (
           <button
             className={`btn btn--sm ${agregado ? 'btn--done' : 'btn--primary'} product__add`}
             disabled={agotado}
@@ -43,6 +49,7 @@ export default function ProductCard({ producto }) {
           >
             {agotado ? 'Agotado' : agregado ? <><Icon name="check" size={18} /> <span>Listo</span></> : <><Icon name="plus" size={18} /> <span>Agregar</span></>}
           </button>
+          )}
         </div>
       </div>
     </article>

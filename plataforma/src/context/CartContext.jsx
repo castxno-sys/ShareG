@@ -33,8 +33,9 @@ export function CartProvider({ children }) {
     setTimeout(() => setPulso(false), 600);
   };
 
-  const cambiarCantidad = (id, cantidad) =>
-    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, cantidad: Math.max(1, Math.min(cantidad, i.stock)) } : i)));
+  // delta: +1 / -1 (usa el valor más reciente, así los toques rápidos no se pierden)
+  const cambiarCantidad = (id, delta) =>
+    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, cantidad: Math.max(1, Math.min(i.cantidad + delta, i.stock)) } : i)));
 
   const quitar = (id) => setItems((prev) => prev.filter((i) => i.id !== id));
   const vaciar = () => setItems([]);

@@ -66,9 +66,9 @@ export default function ProductoDetalle() {
   const comprar = (fija = false) => (
     <div className={`buy ${fija ? 'buy--sticky' : ''}`}>
       <div className="qty">
-        <button onClick={() => setCantidad(Math.max(1, cantidad - 1))} aria-label="Menos"><Icon name="minus" size={18} /></button>
+        <button onClick={() => setCantidad((c) => Math.max(1, c - 1))} aria-label="Menos"><Icon name="minus" size={18} /></button>
         <span aria-live="polite">{cantidad}</span>
-        <button onClick={() => setCantidad(Math.min(stock, cantidad + 1))} aria-label="Más"><Icon name="plus" size={18} /></button>
+        <button onClick={() => setCantidad((c) => Math.min(stock, c + 1))} aria-label="Más"><Icon name="plus" size={18} /></button>
       </div>
       <button className="btn btn--primary btn--lg buy__btn" disabled={stock <= 0} onClick={onAgregar}>
         <Icon name="cart" size={18} /> {stock <= 0 ? 'Agotado' : `Agregar · ${pesos(producto.precio * cantidad)}`}

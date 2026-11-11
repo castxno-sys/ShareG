@@ -4,19 +4,22 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useCart } from '../context/CartContext.jsx';
 import Logo from './Logo.jsx';
 import Icon from './Icon.jsx';
+import { useUI } from '../context/UIContext.jsx';
 
 export default function Navbar() {
   const { user, perfil, esProductor, cerrarSesion } = useAuth();
   const { cantidadTotal, pulso } = useCart();
   const [abierto, setAbierto] = useState(false);
+  const { toast } = useUI();
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
   useEffect(() => setAbierto(false), [pathname]);
 
   const salir = async () => {
+    navigate('/', { replace: true }); // primero salir de páginas protegidas
     await cerrarSesion();
-    navigate('/');
+    toast('Sesión cerrada');
   };
 
   const inicial = (perfil?.nombre || user?.email || '?')[0].toUpperCase();
