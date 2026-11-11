@@ -8,6 +8,18 @@ Proyecto de Ingeniería de Software — Universidad de La Salle.
 
 La página de la plataforma está en `index.html`, `css/`, `js/` e `img/`.
 
+## Plataforma web (React + Supabase)
+
+🌐 **En línea:** https://castxno-sys.github.io/ShareG/app/
+
+Marketplace completo: catálogo, carrito, pedidos, reseñas y panel del productor ("Mi finca"), conectado a una base de datos PostgreSQL en Supabase.
+
+- Código fuente: [`plataforma/`](plataforma/) — React 18 + Vite, Supabase (Auth, PostgreSQL, RLS, Storage).
+- SQL de la base de datos: [`plataforma/supabase/migrations/`](plataforma/supabase/migrations/)
+- Versión publicada (compilada): [`app/`](app/)
+
+Cuentas de prueba (contraseña `ShareG2026!`): productor `ernesto@shareg.co` · comprador `comprador@shareg.co`.
+
 ## Pilares de POO
 
 - [Abstracción](abstraccion/): medios de pago (Nequi, PSE, efectivo)
