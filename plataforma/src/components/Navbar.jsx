@@ -24,7 +24,7 @@ export default function Navbar() {
   return (
     <header className="navbar">
       <div className="container navbar__inner">
-        <Link to="/" className="navbar__brand" aria-label="share.G inicio"><Logo /></Link>
+        <Link to="/" className="navbar__brand" aria-label="Share.G inicio"><Logo /></Link>
 
         <nav className={`navbar__links ${abierto ? 'is-open' : ''}`}>
           <NavLink to="/catalogo">Catálogo</NavLink>

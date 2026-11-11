@@ -401,6 +401,25 @@ a {
     background-color: rgba(255, 255, 255, 0.15);
 }
 
+.btn-plataforma {
+    background-color: #e9c46a;
+    color: #1d3a25;
+    box-shadow: 0 6px 18px rgba(233, 196, 106, 0.35);
+}
+
+.btn-plataforma:hover {
+    background-color: #f0cf7e;
+}
+
+.btn-nav--plataforma {
+    background-color: #e9c46a !important;
+    color: #1d3a25 !important;
+}
+
+.cta-section .btn-plataforma {
+    margin: 12px 0 0 12px;
+}
+
 .btn-grande {
     font-size: 1.1rem;
     padding: 16px 34px;

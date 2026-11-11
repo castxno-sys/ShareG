@@ -33,7 +33,7 @@ export default function Login() {
     <AuthLayout>
       <form className="auth__card form" onSubmit={enviar}>
         <h1>Bienvenido de nuevo</h1>
-        <p className="muted">Ingresa a tu cuenta de share.G</p>
+        <p className="muted">Ingresa a tu cuenta de Share.G</p>
         <label>Correo
           <div className="field-icon"><Icon name="user" />
             <input className="input" type="email" autoComplete="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />

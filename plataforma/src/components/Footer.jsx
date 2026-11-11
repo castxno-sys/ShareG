@@ -17,7 +17,7 @@ export default function Footer() {
         </nav>
         <nav className="footer__nav">
           <strong>Productores</strong>
-          <Link to="/registro?rol=productor">Vender en share.G</Link>
+          <Link to="/registro?rol=productor">Vender en Share.G</Link>
           <Link to="/panel">Mi finca</Link>
         </nav>
       </div>

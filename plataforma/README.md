@@ -1,4 +1,4 @@
-# share.G 🌱
+# Share.G 🌱
 
 Mercado digital que conecta a los productores rurales de la **vereda La Trinidad, sector San Francisco (Guasca, Cundinamarca)** con compradores, sin intermediarios.
 
