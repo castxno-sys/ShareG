@@ -23,7 +23,7 @@ export default function Perfil() {
       <header className="page__head page__head--row">
         <div className="farmer">
           <div className="avatar avatar--xl">{form.nombre[0]?.toUpperCase()}</div>
-          <div><h1>Mi perfil</h1><span className="badge badge--verde">{perfil.rol}</span></div>
+          <div><h1>Mi perfil</h1><span className="badge badge--verde">{perfil.etiquetaRol}</span></div>
         </div>
       </header>
       <form className="card form form--grid" onSubmit={enviar}>

@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { supabase } from '../lib/supabase.js';
+import { Usuario } from '../models/index.js';
 
 const AuthContext = createContext(null);
 
@@ -11,7 +12,7 @@ export function AuthProvider({ children }) {
   const cargarPerfil = useCallback(async (userId) => {
     if (!userId) return setPerfil(null);
     const { data } = await supabase.from('perfiles').select('*').eq('id', userId).single();
-    setPerfil(data);
+    setPerfil(Usuario.desdeFila(data)); // Productor o Comprador
   }, []);
 
   useEffect(() => {
@@ -42,7 +43,7 @@ export function AuthProvider({ children }) {
     session,
     user: session?.user ?? null,
     perfil,
-    esProductor: perfil?.rol === 'productor' || perfil?.rol === 'admin',
+    esProductor: perfil?.esProductor ?? false,
     cargando,
     iniciarSesion,
     registrarse,

@@ -12,9 +12,8 @@ export default function ProductCard({ producto }) {
   const { toast } = useUI();
   const { user } = useAuth();
   const [agregado, setAgregado] = useState(false);
-  const esMio = user?.id === producto.productor_id;
-  const agotado = Number(producto.stock) <= 0;
-  const pocos = !agotado && Number(producto.stock) <= 25;
+  const esMio = producto.esDe(user?.id);
+  const { agotado, quedanPocos: pocos } = producto;
 
   const onAgregar = () => {
     agregar(producto);

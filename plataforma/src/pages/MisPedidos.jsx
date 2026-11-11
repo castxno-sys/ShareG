@@ -40,7 +40,7 @@ export default function MisPedidos() {
             <article key={p.id} className="card order">
               <div className="order__head">
                 <div>
-                  <strong>Pedido #{p.id.slice(0, 8).toUpperCase()}</strong>
+                  <strong>Pedido {p.codigo}</strong>
                   <span className="muted">{fecha(p.creado_en)}</span>
                 </div>
                 <strong className="order__total">{pesos(p.total)}</strong>
@@ -53,7 +53,7 @@ export default function MisPedidos() {
               </ul>
               <div className="order__foot">
                 <span className="muted"><Icon name="pin" size={14} /> {p.direccion_entrega}</span>
-                {p.estado === 'pendiente' && (
+                {p.puedeCancelarComprador && (
                   <button className="btn btn--ghost btn--sm text-danger" onClick={() => cancelar(p.id)}>Cancelar pedido</button>
                 )}
               </div>

@@ -1,0 +1,21 @@
+// Pruebas de los modelos del dominio (POO). Ejecutar: npm test
+import assert from 'node:assert/strict';
+const M = await import('../src/models/index.js');
+const { Modelo, Usuario, Productor, Comprador, Producto, Pedido, Resena, Categoria } = M;
+let n=0; const t=(name,fn)=>{fn();n++;console.log('✓',name)};
+t('Modelo es abstracta', ()=>assert.throws(()=>new Modelo(1)));
+t('Usuario es abstracta', ()=>assert.throws(()=>new Usuario({id:1})));
+t('Fábrica polimórfica de Usuario', ()=>{assert.ok(Usuario.desdeFila({id:'a',rol:'productor',nombre:'Ana'}) instanceof Productor);assert.ok(Usuario.desdeFila({id:'b',rol:'comprador',nombre:'Bo'}) instanceof Comprador);});
+t('Polimorfismo esProductor/etiquetaRol', ()=>{const p=Usuario.desdeFila({id:'a',rol:'productor',nombre:'ana maria'});assert.equal(p.esProductor,true);assert.equal(p.etiquetaRol,'Productor');assert.equal(p.inicial,'A');assert.equal(p.primerNombre,'ana');assert.equal(Usuario.desdeFila({id:'b',rol:'comprador'}).esProductor,false);});
+t('Herencia: Productor es Usuario y Modelo', ()=>{const p=new Productor({id:'a',rol:'productor'});assert.ok(p instanceof Usuario && p instanceof Modelo);});
+const prod=Producto.desdeFila({id:'p',nombre:'Fresa',precio:'9000',unidad:'caja',stock:'12',productor_id:'u1',categoria:{nombre:'Frutas',icono:'🍓'}});
+t('Producto normaliza tipos y categoría', ()=>{assert.equal(prod.precio,9000);assert.equal(prod.categoria,'Frutas');assert.equal(prod.categoria_icono,'🍓');});
+t('Producto reglas: quedanPocos/agotado/esDe/precioPor', ()=>{assert.equal(prod.quedanPocos,true);assert.equal(prod.agotado,false);assert.ok(prod.esDe('u1'));assert.ok(!prod.esDe('x'));assert.equal(prod.precioPor(3),27000);assert.equal(prod.disponibleTexto,'12 cajas');});
+t('Producto.validar', ()=>{assert.throws(()=>Producto.validar({nombre:'a',precio:1,stock:1}));assert.throws(()=>Producto.validar({nombre:'Papa',precio:-1,stock:1}));Producto.validar({nombre:'Papa',precio:0,stock:0});});
+const filas=[{id:'i1',subtotal:2800,cantidad:1,precio_unitario:2800,nombre_producto:'Papa',pedido:{id:'abcdef123456',estado:'pendiente',creado_en:'2026-11-10'}},{id:'i2',cantidad:2,precio_unitario:2200,nombre_producto:'Zanahoria',pedido:{id:'abcdef123456',estado:'pendiente',creado_en:'2026-11-10'}},{id:'i3',cantidad:1,precio_unitario:100,nombre_producto:'X',pedido:{id:'zz99',estado:'enviado',creado_en:'2026-11-11'}}];
+const peds=Pedido.agruparPorPedido(filas);
+t('Pedido.agruparPorPedido + composición', ()=>{assert.equal(peds.length,2);assert.equal(peds[1].items.length,2);assert.equal(peds[1].total,7200);assert.equal(peds[0].codigo,'#ZZ99');});
+t('Pedido flujo de estados', ()=>{assert.equal(peds[1].siguienteEstado,'confirmado');assert.equal(peds[0].siguienteEstado,'entregado');assert.equal(new Pedido({id:'x',estado:'entregado'}).siguienteEstado,null);assert.equal(new Pedido({id:'x',estado:'cancelado'}).cerrado,true);assert.ok(peds[1].puedeCancelarComprador);assert.ok(!peds[0].puedeCancelarComprador);});
+t('Resena valida 1..5', ()=>{assert.throws(()=>Resena.validar({calificacion:6}));assert.equal(new Resena({id:'r',calificacion:4,autor_id:'u'}).autorNombre,'Anónimo');});
+t('Categoria.etiqueta', ()=>assert.equal(new Categoria({id:1,nombre:'Frutas',icono:'🍓',slug:'frutas'}).etiqueta,'🍓 Frutas'));
+console.log(`\n${n} pruebas OK`);

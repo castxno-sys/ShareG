@@ -44,9 +44,9 @@ export default function ProductoDetalle() {
     );
   }
 
-  const stock = Number(producto.stock);
-  const yaReseno = resenas.some((r) => r.autor_id === user?.id);
-  const esMio = producto.productor_id === user?.id;
+  const { stock } = producto;
+  const yaReseno = resenas.some((r) => r.esDe(user?.id));
+  const esMio = producto.esDe(user?.id);
 
   const onAgregar = () => {
     agregar(producto, cantidad);
@@ -70,8 +70,8 @@ export default function ProductoDetalle() {
         <span aria-live="polite">{cantidad}</span>
         <button onClick={() => setCantidad((c) => Math.min(stock, c + 1))} aria-label="Más"><Icon name="plus" size={18} /></button>
       </div>
-      <button className="btn btn--primary btn--lg buy__btn" disabled={stock <= 0} onClick={onAgregar}>
-        <Icon name="cart" size={18} /> {stock <= 0 ? 'Agotado' : `Agregar · ${pesos(producto.precio * cantidad)}`}
+      <button className="btn btn--primary btn--lg buy__btn" disabled={producto.agotado} onClick={onAgregar}>
+        <Icon name="cart" size={18} /> {producto.agotado ? 'Agotado' : `Agregar · ${pesos(producto.precioPor(cantidad))}`}
       </button>
     </div>
   );
@@ -95,7 +95,7 @@ export default function ProductoDetalle() {
           {producto.descripcion && <p className="detail__desc">{producto.descripcion}</p>}
 
           <div className="detail__facts">
-            <div><Icon name="package" size={18} /><span>Disponibles</span><b>{cantidadUnidad(stock, producto.unidad)}</b></div>
+            <div><Icon name="package" size={18} /><span>Disponibles</span><b>{producto.disponibleTexto}</b></div>
             <div><Icon name="truck" size={18} /><span>Entrega</span><b>Acordada con el productor</b></div>
           </div>
 
@@ -131,8 +131,8 @@ export default function ProductoDetalle() {
             {resenas.map((r) => (
               <li key={r.id} className="card review">
                 <div className="review__head">
-                  <div className="avatar">{r.autor?.nombre?.[0]}</div>
-                  <div><strong>{r.autor?.nombre}</strong><span className="muted">{fecha(r.creado_en)}</span></div>
+                  <div className="avatar">{r.autorNombre[0]}</div>
+                  <div><strong>{r.autorNombre}</strong><span className="muted">{fecha(r.creado_en)}</span></div>
                   <Estrellas valor={r.calificacion} tam="sm" />
                 </div>
                 {r.comentario && <p>{r.comentario}</p>}

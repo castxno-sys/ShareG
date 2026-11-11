@@ -1,9 +1,10 @@
 import { supabase } from '../lib/supabase.js';
+import { Categoria, Producto, Resena } from '../models/index.js';
 
 export async function listarCategorias() {
   const { data, error } = await supabase.from('categorias').select('*').order('id');
   if (error) throw error;
-  return data;
+  return Categoria.desdeFilas(data);
 }
 
 export async function listarCatalogo({ busqueda = '', categoria = '', orden = 'recientes' } = {}) {
@@ -16,13 +17,13 @@ export async function listarCatalogo({ busqueda = '', categoria = '', orden = 'r
   else q = q.order('creado_en', { ascending: false });
   const { data, error } = await q;
   if (error) throw error;
-  return data;
+  return Producto.desdeFilas(data);
 }
 
 export async function obtenerProducto(id) {
   const { data, error } = await supabase.from('catalogo').select('*').eq('id', id).single();
   if (error) throw error;
-  return data;
+  return Producto.desdeFila(data);
 }
 
 export async function listarResenas(productoId) {
@@ -32,10 +33,11 @@ export async function listarResenas(productoId) {
     .eq('producto_id', productoId)
     .order('creado_en', { ascending: false });
   if (error) throw error;
-  return data;
+  return Resena.desdeFilas(data);
 }
 
 export async function crearResena(resena) {
+  Resena.validar(resena);
   const { error } = await supabase.from('resenas').insert(resena);
   if (error) throw error;
 }
@@ -48,7 +50,7 @@ export async function misProductos(productorId) {
     .eq('productor_id', productorId)
     .order('creado_en', { ascending: false });
   if (error) throw error;
-  return data;
+  return Producto.desdeFilas(data);
 }
 
 export async function obtenerMiProducto(id) {
@@ -59,6 +61,7 @@ export async function obtenerMiProducto(id) {
 
 export async function guardarProducto(producto) {
   const { id, ...campos } = producto;
+  if ('nombre' in campos) Producto.validar(campos); // reglas de negocio del modelo
   const q = id
     ? supabase.from('productos').update(campos).eq('id', id)
     : supabase.from('productos').insert(campos);

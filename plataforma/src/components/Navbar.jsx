@@ -22,7 +22,7 @@ export default function Navbar() {
     toast('Sesión cerrada');
   };
 
-  const inicial = (perfil?.nombre || user?.email || '?')[0].toUpperCase();
+  const inicial = perfil?.inicial ?? (user?.email || '?')[0].toUpperCase();
 
   return (
     <header className="navbar">

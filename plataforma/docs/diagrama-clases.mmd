@@ -1,0 +1,125 @@
+---
+config:
+  layout: elk
+---
+classDiagram
+  direction TB
+
+  class Modelo {
+    <<abstract>>
+    +id
+    +desdeFila(fila)$ Modelo
+    +desdeFilas(filas)$ Modelo[]
+  }
+
+  class Usuario {
+    <<abstract>>
+    +nombre : string
+    +rol : string
+    +telefono : string
+    +vereda : string
+    +sector : string
+    +descripcion : string
+    +totalProductos : number
+    +desdeFila(fila)$ Productor | Comprador
+    +inicial : string
+    +primerNombre : string
+    +esProductor : boolean
+    +etiquetaRol : string
+    +puedeComprar(producto) boolean
+  }
+
+  class Productor {
+    +esProductor : boolean = true
+    +etiquetaRol = "Productor"
+    +puedeEditar(producto) boolean
+  }
+
+  class Comprador {
+    +etiquetaRol = "Comprador"
+  }
+
+  class Categoria {
+    +nombre : string
+    +slug : string
+    +icono : string
+    +etiqueta : string
+  }
+
+  class Producto {
+    +UMBRAL_POCOS = 25$
+    +nombre : string
+    +descripcion : string
+    +precio : number
+    +unidad : string
+    +stock : number
+    +imagen_url : string
+    +activo : boolean
+    +productor_id
+    +categoria_id
+    +calificacion : number
+    +num_resenas : number
+    +validar(datos)$ void
+    +agotado : boolean
+    +quedanPocos : boolean
+    +tieneResenas : boolean
+    +disponibleTexto : string
+    +esDe(usuarioId) boolean
+    +precioPor(cantidad) number
+  }
+
+  class Pedido {
+    +FLUJO = [pendiente, confirmado, enviado, entregado]$
+    +estado : string
+    +total : number
+    +direccion_entrega : string
+    +notas : string
+    +creado_en : Date
+    +comprador
+    +items : PedidoItem[]
+    +agruparPorPedido(filas)$ Pedido[]
+    +calcularTotal() number
+    +codigo : string
+    +cancelado : boolean
+    +cerrado : boolean
+    +siguienteEstado : string
+    +puedeCancelarComprador : boolean
+  }
+
+  class PedidoItem {
+    +pedido_id
+    +producto_id
+    +productor_id
+    +nombre_producto : string
+    +cantidad : number
+    +precio_unitario : number
+    +subtotal : number
+  }
+
+  class Resena {
+    +producto_id
+    +autor_id
+    +calificacion : 1..5
+    +comentario : string
+    +creado_en : Date
+    +validar(datos)$ void
+    +autorNombre : string
+    +esDe(usuarioId) boolean
+  }
+
+  Modelo <|-- Usuario
+  Modelo <|-- Categoria
+  Modelo <|-- Producto
+  Modelo <|-- Pedido
+  Modelo <|-- PedidoItem
+  Modelo <|-- Resena
+  Usuario <|-- Productor
+  Usuario <|-- Comprador
+
+  Productor "1" --> "0..*" Producto : publica
+  Categoria "1" --> "0..*" Producto : clasifica
+  Comprador "1" --> "0..*" Pedido : realiza
+  Pedido "1" *-- "1..*" PedidoItem : contiene
+  PedidoItem "0..*" --> "1" Producto : refiere a
+  Producto "1" --> "0..*" Resena : recibe
+  Usuario "1" --> "0..*" Resena : escribe

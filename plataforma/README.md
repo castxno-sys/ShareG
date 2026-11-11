@@ -41,6 +41,7 @@ shareg/
 │   ├── lib/supabase.js       cliente de Supabase
 │   ├── context/              AuthContext (sesión/perfil) y CartContext (carrito)
 │   ├── services/             acceso a datos: productos, pedidos, perfiles
+│   ├── models/               clases POO del dominio (Usuario, Producto, Pedido…)
 │   ├── components/           Navbar, Footer, ProductCard, Loader, Estrellas…
 │   ├── pages/                Home, Catálogo, Detalle, Carrito, Login, Registro,
 │   │                         MisPedidos, PanelProductor, ProductoForm, Perfil
@@ -63,6 +64,17 @@ shareg/
 **Funciones PostgreSQL (RPC):** `crear_pedido` (transacción que valida y descuenta stock), `actualizar_estado_pedido`, `resumen_productor`. **Vista:** `catalogo` (productos + productor + calificación promedio).
 
 **Seguridad:** RLS en todas las tablas — cada productor solo edita sus productos, cada comprador solo ve sus pedidos, y nadie puede cambiarse el rol.
+
+## 🧩 Modelos POO y diagrama de clases
+
+La capa `src/models/` contiene las clases del dominio, usadas por los servicios y componentes:
+
+- `Modelo` (abstracta) → `Usuario` (abstracta) → `Productor` / `Comprador`
+- `Categoria`, `Producto`, `Pedido` ◆ `PedidoItem` (composición), `Resena`
+
+Diagramas en [`docs/`](docs/): `diagrama-clases.png` y `diagrama-arquitectura.png` (fuente Mermaid en los `.mmd`).
+
+Pruebas de los modelos: `npm test`
 
 ## ✨ Funcionalidades
 

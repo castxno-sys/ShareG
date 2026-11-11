@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useUI } from '../context/UIContext.jsx';
 import { misProductos, eliminarProducto, guardarProducto } from '../services/productos.js';
 import { pedidosRecibidos, actualizarEstado, resumenProductor } from '../services/pedidos.js';
-import { pesos, fecha, ESTADOS, SIGUIENTE_ESTADO, cantidadUnidad, IMG_DEFECTO } from '../utils/formato.js';
+import { pesos, fecha, ESTADOS, IMG_DEFECTO } from '../utils/formato.js';
 import Loader from '../components/Loader.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 import EstadoPedido from '../components/EstadoPedido.jsx';
@@ -30,7 +30,7 @@ export default function PanelProductor() {
   useEffect(() => { cargar().catch((e) => toast(e.message, { tipo: 'error' })); }, []);
 
   const avanzar = async (p) => {
-    const sig = SIGUIENTE_ESTADO[p.estado];
+    const sig = p.siguienteEstado;
     try { await actualizarEstado(p.id, sig); toast(`Pedido ${ESTADOS[sig].label.toLowerCase()}`); cargar(); }
     catch (e) { toast(e.message, { tipo: 'error' }); }
   };
@@ -59,14 +59,14 @@ export default function PanelProductor() {
     ['Productos activos', resumen.productos_activos, 'sprout', 'terracota'],
   ];
   const visibles = pedidos.filter((p) =>
-    filtro === 'activos' ? !['entregado', 'cancelado'].includes(p.estado) : ['entregado', 'cancelado'].includes(p.estado));
+    filtro === 'activos' ? !p.cerrado : p.cerrado);
 
   return (
     <div className="container page">
       <header className="page__head page__head--row">
         <div>
           <span className="eyebrow">Mi finca</span>
-          <h1>Hola, {perfil.nombre.split(' ')[0]} 👋</h1>
+          <h1>Hola, {perfil.primerNombre} 👋</h1>
           <p>{resumen.pendientes > 0 ? `Tienes ${resumen.pendientes} ${resumen.pendientes === 1 ? 'pedido' : 'pedidos'} por confirmar.` : 'Todo al día en tus pedidos.'}</p>
         </div>
         <Link to="/panel/producto/nuevo" className="btn btn--primary"><Icon name="plus" size={18} /> Nuevo producto</Link>
@@ -108,7 +108,7 @@ export default function PanelProductor() {
                       <div className="avatar">{p.comprador?.nombre?.[0]}</div>
                       <div>
                         <strong>{p.comprador?.nombre}</strong>
-                        <span className="muted">#{p.id.slice(0, 8).toUpperCase()} · {fecha(p.creado_en)}</span>
+                        <span className="muted">{p.codigo} · {fecha(p.creado_en)}</span>
                       </div>
                     </div>
                     <strong className="order__total">{pesos(p.total)}</strong>
@@ -124,7 +124,7 @@ export default function PanelProductor() {
                     {p.comprador?.telefono && <a href={`tel:${p.comprador.telefono}`}><Icon name="phone" size={14} /> {p.comprador.telefono}</a>}
                     {p.notas && <span className="order__note">“{p.notas}”</span>}
                   </div>
-                  {SIGUIENTE_ESTADO[p.estado] && (
+                  {p.siguienteEstado && (
                     <div className="order__actions">
                       <button className="btn btn--primary" onClick={() => avanzar(p)}><Icon name="check" size={18} /> {ACCION[p.estado]}</button>
                       <button className="btn btn--ghost text-danger" onClick={() => cancelar(p)}>Cancelar</button>
@@ -148,10 +148,10 @@ export default function PanelProductor() {
               <img src={p.imagen_url || IMG_DEFECTO} alt="" />
               <div className="inv__info">
                 <strong>{p.nombre}</strong>
-                <span className="muted">{p.categoria?.icono} {p.categoria?.nombre ?? 'Sin categoría'}</span>
+                <span className="muted">{p.categoria ? `${p.categoria_icono} ${p.categoria}` : 'Sin categoría'}</span>
                 <span className="inv__price">{pesos(p.precio)} <small>/ {p.unidad}</small></span>
-                <span className={Number(p.stock) <= 25 ? 'text-warn' : 'muted'}>
-                  {Number(p.stock) <= 25 && <Icon name="alert" size={14} />} {cantidadUnidad(p.stock, p.unidad)} disponibles
+                <span className={p.quedanPocos || p.agotado ? 'text-warn' : 'muted'}>
+                  {(p.quedanPocos || p.agotado) && <Icon name="alert" size={14} />} {p.disponibleTexto} disponibles
                 </span>
               </div>
               <div className="inv__actions">

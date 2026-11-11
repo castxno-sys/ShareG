@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase.js';
+import { Pedido } from '../models/index.js';
 
 export async function crearPedido(items, direccion, notas) {
   const payload = items.map((i) => ({ producto_id: i.id, cantidad: i.cantidad }));
@@ -16,7 +17,7 @@ export async function misPedidos(userId) {
     .eq('comprador_id', userId)
     .order('creado_en', { ascending: false });
   if (error) throw error;
-  return data;
+  return Pedido.desdeFilas(data);
 }
 
 export async function pedidosRecibidos(productorId) {
@@ -26,16 +27,7 @@ export async function pedidosRecibidos(productorId) {
     .eq('productor_id', productorId)
     .order('pedido_id');
   if (error) throw error;
-  // agrupar ítems por pedido
-  const mapa = new Map();
-  for (const it of data) {
-    const p = it.pedido;
-    if (!mapa.has(p.id)) mapa.set(p.id, { ...p, items: [], total: 0 });
-    const g = mapa.get(p.id);
-    g.items.push(it);
-    g.total += Number(it.subtotal);
-  }
-  return [...mapa.values()].sort((a, b) => new Date(b.creado_en) - new Date(a.creado_en));
+  return Pedido.agruparPorPedido(data);
 }
 
 export async function actualizarEstado(pedidoId, estado) {

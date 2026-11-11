@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase.js';
+import { Usuario } from '../models/index.js';
 
 export async function actualizarPerfil(id, campos) {
   const { error } = await supabase.from('perfiles').update(campos).eq('id', id);
@@ -12,5 +13,5 @@ export async function listarProductores() {
     .eq('rol', 'productor')
     .order('creado_en');
   if (error) throw error;
-  return data;
+  return Usuario.desdeFilas(data);
 }

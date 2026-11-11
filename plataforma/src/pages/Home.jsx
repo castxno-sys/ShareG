@@ -92,12 +92,12 @@ export default function Home() {
           <div className="farmers">
             {productores.map((p) => (
               <article key={p.id} className="card farmer-card">
-                <div className="avatar avatar--lg">{p.nombre[0]}</div>
+                <div className="avatar avatar--lg">{p.inicial}</div>
                 <div>
                   <h3>{p.nombre}</h3>
                   <span className="muted"><Icon name="pin" size={13} /> Vereda {p.vereda}</span>
                   {p.descripcion && <p>{p.descripcion}</p>}
-                  <span className="chip chip--soft">{p.productos?.[0]?.count ?? 0} productos</span>
+                  <span className="chip chip--soft">{p.totalProductos} productos</span>
                 </div>
               </article>
             ))}
