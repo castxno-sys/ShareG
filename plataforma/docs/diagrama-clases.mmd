@@ -31,6 +31,11 @@ classDiagram
   }
 
   class Productor {
+    +creado_en : Date
+    +totalProductos : number
+    +categorias : string[]
+    +calificacion : number
+    +productosCoinciden : string[]
     +esProductor : boolean = true
     +etiquetaRol = "Productor"
     +puedeEditar(producto) boolean
