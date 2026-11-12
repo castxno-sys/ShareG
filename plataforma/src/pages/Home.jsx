@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { listarCatalogo, listarCategorias } from '../services/productos.js';
-import { listarProductores } from '../services/perfiles.js';
+import { listarProductores, estadisticasPublicas } from '../services/perfiles.js';
+import { haceCuanto } from '../utils/formato.js';
 import ProductCard from '../components/ProductCard.jsx';
 import { SkeletonGrid } from '../components/Skeleton.jsx';
 import Icon from '../components/Icon.jsx';
@@ -11,6 +12,7 @@ export default function Home() {
   const [destacados, setDestacados] = useState(null);
   const [categorias, setCategorias] = useState([]);
   const [productores, setProductores] = useState([]);
+  const [cifras, setCifras] = useState(null);
   const [q, setQ] = useState('');
   const navigate = useNavigate();
   const escritorio = useMediaQuery('(min-width: 721px)'); // en celular no se descargan las fotos grandes
@@ -19,6 +21,7 @@ export default function Home() {
     listarCatalogo({ limite: 8 }).then(setDestacados).catch(() => setDestacados([]));
     listarCategorias().then(setCategorias).catch(console.error);
     listarProductores().then(setProductores).catch(console.error);
+    estadisticasPublicas().then(setCifras).catch(console.error);
   }, []);
 
   const buscar = (e) => {
@@ -43,9 +46,9 @@ export default function Home() {
               <button className="btn btn--primary">Buscar</button>
             </form>
             <div className="hero__facts">
-              <div><strong>{productores.length || '—'}</strong><span>familias productoras</span></div>
-              <div><strong>{destacados?.length ?? '—'}{destacados?.length === 8 ? '+' : ''}</strong><span>productos frescos</span></div>
-              <div><strong>0</strong><span>intermediarios</span></div>
+              <div><strong>{cifras?.productores ?? '—'}</strong><span>familias productoras</span></div>
+              <div><strong>{cifras?.compradores ?? '—'}</strong><span>compradores</span></div>
+              <div><strong>{cifras?.productos ?? '—'}</strong><span>productos frescos</span></div>
             </div>
           </div>
           {escritorio && (
@@ -85,6 +88,27 @@ export default function Home() {
         )}
       </section>
 
+      {cifras?.recientes?.length > 0 && (
+        <section className="container section">
+          <div className="joined card">
+            <div className="joined__text">
+              <span className="eyebrow">Comunidad</span>
+              <h2>{cifras.compradores} compradores ya le compran a La Trinidad</h2>
+              <p className="muted">Los últimos en unirse:</p>
+            </div>
+            <ul className="joined__list">
+              {cifras.recientes.map((c) => (
+                <li key={c.nombre + c.creado_en}>
+                  <span className="avatar">{c.nombre[0]}</span>
+                  <div><strong>{c.nombre}</strong><span className="muted">{haceCuanto(c.creado_en)}</span></div>
+                </li>
+              ))}
+            </ul>
+            <Link to="/registro" className="btn btn--primary">Únete como comprador</Link>
+          </div>
+        </section>
+      )}
+
       {productores.length > 0 && (
         <section className="container section">
           <div className="section__head">
@@ -98,7 +122,7 @@ export default function Home() {
               <article key={p.id} className="card farmer-card">
                 <div className="avatar avatar--lg">{p.inicial}</div>
                 <div>
-                  <h3>{p.nombre}</h3>
+                  <h3>{p.nombreVisible}</h3>
                   <span className="muted"><Icon name="pin" size={13} /> Vereda {p.vereda}</span>
                   {p.descripcion && <p>{p.descripcion}</p>}
                   <span className="chip chip--soft">{p.totalProductos} productos</span>

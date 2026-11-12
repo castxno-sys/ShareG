@@ -24,6 +24,7 @@ classDiagram
     +desdeFila(fila)$ Productor | Comprador
     +inicial : string
     +primerNombre : string
+    +nombreVisible : string
     +esProductor : boolean
     +etiquetaRol : string
     +puedeComprar(producto) boolean
@@ -36,7 +37,15 @@ classDiagram
   }
 
   class Comprador {
+    +DIAS_NUEVO = 7$
+    +creado_en : Date
+    +pedidos : number
+    +comprasConmigo : number
+    +totalConmigo : number
+    +ultimaCompra : Date
     +etiquetaRol = "Comprador"
+    +esNuevo : boolean
+    +teHaComprado : boolean
   }
 
   class Categoria {

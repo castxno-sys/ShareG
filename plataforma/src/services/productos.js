@@ -10,7 +10,7 @@ const ORDENES = {
 };
 
 /** Limpia la caché de todo lo que muestra productos (después de cualquier cambio). */
-export const invalidarProductos = () => invalidar('catalogo', 'producto:', 'productores');
+export const invalidarProductos = () => invalidar('catalogo', 'producto:', 'productores', 'estadisticas');
 
 /* ----- Lectura pública (con caché) ----- */
 export const listarCategorias = () =>

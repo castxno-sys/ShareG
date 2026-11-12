@@ -38,3 +38,15 @@ export function imagen(url, ancho) {
 /** srcset con varios anchos para que el navegador elija según la pantalla. */
 export const srcset = (url, anchos) => anchos.map((w) => `${imagen(url, w)} ${w}w`).join(', ');
 
+/** "hoy", "ayer", "hace 3 días", "hace 2 semanas"… */
+export function haceCuanto(d) {
+  const dias = Math.floor((Date.now() - new Date(d)) / 86_400_000);
+  if (dias <= 0) return 'hoy';
+  if (dias === 1) return 'ayer';
+  if (dias < 14) return `hace ${dias} días`;
+  if (dias < 60) return `hace ${Math.floor(dias / 7)} semanas`;
+  return `hace ${Math.floor(dias / 30)} meses`;
+}
+
+export const VEREDAS = ['La Trinidad', 'San Francisco', 'Siecha', 'Santa Bárbara', 'Mariano Ospina', 'Otra vereda de Guasca'];
+

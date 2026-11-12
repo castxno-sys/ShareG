@@ -24,11 +24,16 @@ export class Usuario extends Modelo {
   }
 
   get inicial() {
-    return (this.nombre || '?').trim()[0].toUpperCase();
+    return (this.nombre || '?').trim()[0]?.toUpperCase() ?? '?';
   }
 
   get primerNombre() {
-    return this.nombre.split(' ')[0];
+    return this.nombreVisible.split(' ')[0];
+  }
+
+  /** Nombre con mayúscula inicial en cada palabra ("tomas garcia" → "Tomas Garcia"). */
+  get nombreVisible() {
+    return this.nombre.trim().toLowerCase().replace(/(^|\s)\S/g, (l) => l.toUpperCase());
   }
 
   // Métodos que cada subclase sobrescribe (polimorfismo)
@@ -44,5 +49,22 @@ export class Productor extends Usuario {
 }
 
 export class Comprador extends Usuario {
+  static DIAS_NUEVO = 7;
+
+  constructor(fila = {}) {
+    super(fila);
+    // Actividad (viene de la función nuevos_compradores, vista del productor)
+    this.creado_en = fila.creado_en ?? null;
+    this.pedidos = Number(fila.pedidos ?? 0);
+    this.comprasConmigo = Number(fila.compras_conmigo ?? 0);
+    this.totalConmigo = Number(fila.total_conmigo ?? 0);
+    this.ultimaCompra = fila.ultima_compra ?? null;
+  }
+
   get etiquetaRol() { return 'Comprador'; }
+  /** Se registró hace 7 días o menos. */
+  get esNuevo() {
+    return !!this.creado_en && Date.now() - new Date(this.creado_en) <= Comprador.DIAS_NUEVO * 86_400_000;
+  }
+  get teHaComprado() { return this.comprasConmigo > 0; }
 }

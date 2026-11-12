@@ -5,7 +5,8 @@ import { useUI } from '../context/UIContext.jsx';
 import { useBilletera } from '../context/BilleteraContext.jsx';
 import { misProductos, eliminarProducto, guardarProducto } from '../services/productos.js';
 import { pedidosRecibidos, actualizarEstado, resumenProductor } from '../services/pedidos.js';
-import { pesos, fecha, ESTADOS, imagen } from '../utils/formato.js';
+import { listarNuevosCompradores } from '../services/perfiles.js';
+import { pesos, fecha, ESTADOS, imagen, haceCuanto } from '../utils/formato.js';
 import Loader from '../components/Loader.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 import EstadoPedido from '../components/EstadoPedido.jsx';
@@ -22,12 +23,15 @@ export default function PanelProductor() {
   const [productos, setProductos] = useState([]);
   const [pedidos, setPedidos] = useState([]);
   const [resumen, setResumen] = useState(null);
+  const [compradores, setCompradores] = useState([]);
   const [cargando, setCargando] = useState(true);
 
   // Las tres consultas van en paralelo
   const cargar = useCallback(async () => {
-    const [pr, pe, rs] = await Promise.all([misProductos(user.id), pedidosRecibidos(user.id), resumenProductor()]);
-    setProductos(pr); setPedidos(pe); setResumen(rs);
+    const [pr, pe, rs, co] = await Promise.all([
+      misProductos(user.id), pedidosRecibidos(user.id), resumenProductor(), listarNuevosCompradores(),
+    ]);
+    setProductos(pr); setPedidos(pe); setResumen(rs); setCompradores(co);
     setCargando(false);
   }, [user.id]);
   useEffect(() => { cargar().catch((e) => toast(e.message, { tipo: 'error' })); }, [cargar, toast]);
@@ -66,6 +70,7 @@ export default function PanelProductor() {
     ['Por confirmar', resumen.pendientes, 'clock', 'amarillo'],
     ['Productos activos', resumen.productos_activos, 'sprout', 'terracota'],
   ];
+  const nuevos = compradores.filter((c) => c.esNuevo).length;
   const visibles = pedidos.filter((p) =>
     filtro === 'activos' ? !p.cerrado : p.cerrado);
 
@@ -96,6 +101,9 @@ export default function PanelProductor() {
         </button>
         <button role="tab" aria-selected={tab === 'productos'} className={tab === 'productos' ? 'is-active' : ''} onClick={() => setTab('productos')}>
           Mis productos <span className="tabs__count tabs__count--muted">{productos.length}</span>
+        </button>
+        <button role="tab" aria-selected={tab === 'compradores'} className={tab === 'compradores' ? 'is-active' : ''} onClick={() => setTab('compradores')}>
+          Compradores {nuevos > 0 ? <span className="tabs__count">{nuevos} nuevos</span> : <span className="tabs__count tabs__count--muted">{compradores.length}</span>}
         </button>
       </div>
 
@@ -175,6 +183,30 @@ export default function PanelProductor() {
             </article>
           ))}
         </div>
+      ))}
+
+      {tab === 'compradores' && (compradores.length === 0 ? (
+        <EmptyState icono="🛒" titulo="Aún no hay compradores" texto="Cuando alguien cree su cuenta de comprador aparecerá aquí." />
+      ) : (
+        <>
+          <p className="muted panel-note">Todas las personas que se han registrado como compradoras, de la más reciente a la más antigua. Solo ves cuánto te han comprado a ti.</p>
+          <div className="buyers">
+            {compradores.map((c) => (
+              <article key={c.id} className={`card buyer ${c.esNuevo ? 'buyer--new' : ''}`}>
+                <div className="avatar avatar--lg">{c.inicial}</div>
+                <div className="buyer__info">
+                  <strong>{c.nombreVisible} {c.esNuevo && <span className="tag-new">Nuevo</span>}</strong>
+                  <span className="muted"><Icon name="pin" size={13} /> {c.vereda || 'Sin vereda'} · se unió {haceCuanto(c.creado_en)} ({fecha(c.creado_en)})</span>
+                  {c.teHaComprado ? (
+                    <span className="buyer__stat buyer__stat--ok"><Icon name="check" size={14} /> Te ha comprado {c.comprasConmigo} {c.comprasConmigo === 1 ? 'vez' : 'veces'} · {pesos(c.totalConmigo)}</span>
+                  ) : (
+                    <span className="buyer__stat">{c.pedidos > 0 ? `Ha hecho ${c.pedidos} ${c.pedidos === 1 ? 'pedido' : 'pedidos'} a otras fincas` : 'Todavía no ha hecho pedidos'}</span>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </>
       ))}
     </div>
   );
