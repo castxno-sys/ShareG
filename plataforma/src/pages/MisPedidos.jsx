@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useUI } from '../context/UIContext.jsx';
@@ -15,8 +15,11 @@ export default function MisPedidos() {
   const [pedidos, setPedidos] = useState([]);
   const [cargando, setCargando] = useState(true);
 
-  const cargar = () => misPedidos(user.id).then(setPedidos).finally(() => setCargando(false));
-  useEffect(() => { cargar(); }, []);
+  const cargar = useCallback(
+    () => misPedidos(user.id).then(setPedidos).catch(console.error).finally(() => setCargando(false)),
+    [user.id],
+  );
+  useEffect(() => { cargar(); }, [cargar]);
 
   const cancelar = async (id) => {
     const ok = await confirmar('¿Cancelar este pedido?', { texto: 'Los productos vuelven a estar disponibles para otros compradores.', boton: 'Sí, cancelar', peligro: true });

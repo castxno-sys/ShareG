@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useUI } from '../context/UIContext.jsx';
 import { misProductos, eliminarProducto, guardarProducto } from '../services/productos.js';
 import { pedidosRecibidos, actualizarEstado, resumenProductor } from '../services/pedidos.js';
-import { pesos, fecha, ESTADOS, IMG_DEFECTO } from '../utils/formato.js';
+import { pesos, fecha, ESTADOS, imagen } from '../utils/formato.js';
 import Loader from '../components/Loader.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 import EstadoPedido from '../components/EstadoPedido.jsx';
@@ -22,12 +22,13 @@ export default function PanelProductor() {
   const [resumen, setResumen] = useState(null);
   const [cargando, setCargando] = useState(true);
 
-  const cargar = async () => {
+  // Las tres consultas van en paralelo
+  const cargar = useCallback(async () => {
     const [pr, pe, rs] = await Promise.all([misProductos(user.id), pedidosRecibidos(user.id), resumenProductor()]);
     setProductos(pr); setPedidos(pe); setResumen(rs);
     setCargando(false);
-  };
-  useEffect(() => { cargar().catch((e) => toast(e.message, { tipo: 'error' })); }, []);
+  }, [user.id]);
+  useEffect(() => { cargar().catch((e) => toast(e.message, { tipo: 'error' })); }, [cargar, toast]);
 
   const avanzar = async (p) => {
     const sig = p.siguienteEstado;
@@ -145,7 +146,7 @@ export default function PanelProductor() {
         <div className="inventory">
           {productos.map((p) => (
             <article key={p.id} className={`card inv ${p.activo ? '' : 'inv--off'}`}>
-              <img src={p.imagen_url || IMG_DEFECTO} alt="" />
+              <img src={imagen(p.imagen_url, 176)} width="88" height="88" alt="" loading="lazy" decoding="async" />
               <div className="inv__info">
                 <strong>{p.nombre}</strong>
                 <span className="muted">{p.categoria ? `${p.categoria_icono} ${p.categoria}` : 'Sin categoría'}</span>

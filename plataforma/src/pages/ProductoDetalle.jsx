@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { obtenerProducto, listarResenas, crearResena } from '../services/productos.js';
 import { useCart } from '../context/CartContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useUI } from '../context/UIContext.jsx';
-import { pesos, fecha, cantidadUnidad, IMG_DEFECTO } from '../utils/formato.js';
+import { pesos, fecha, cantidadUnidad, imagen, srcset } from '../utils/formato.js';
 import Loader from '../components/Loader.jsx';
 import Estrellas from '../components/Estrellas.jsx';
 import Calificacion from '../components/Calificacion.jsx';
@@ -22,16 +22,16 @@ export default function ProductoDetalle() {
   const [cargando, setCargando] = useState(true);
   const [nueva, setNueva] = useState({ calificacion: 5, comentario: '' });
 
-  const cargar = async () => {
+  const cargar = useCallback(async () => {
     try {
-      const [p, r] = await Promise.all([obtenerProducto(id), listarResenas(id)]);
+      const [p, r] = await Promise.all([obtenerProducto(id), listarResenas(id)]); // en paralelo
       setProducto(p);
       setResenas(r);
     } catch { setProducto(null); }
     setCargando(false);
-  };
+  }, [id]);
 
-  useEffect(() => { setCargando(true); setCantidad(1); cargar(); }, [id]);
+  useEffect(() => { setCargando(true); setCantidad(1); cargar(); }, [cargar]);
 
   if (cargando) return <Loader />;
   if (!producto) {
@@ -85,7 +85,8 @@ export default function ProductoDetalle() {
 
       <div className="detail">
         <div className="detail__media">
-          <img src={producto.imagen_url || IMG_DEFECTO} alt={producto.nombre} />
+          <img src={imagen(producto.imagen_url, 800)} srcSet={srcset(producto.imagen_url, [480, 800, 1100])}
+            sizes="(max-width: 900px) 100vw, 580px" width="800" height="800" alt={producto.nombre} fetchpriority="high" />
         </div>
         <div className="detail__info">
           {producto.categoria && <span className="chip">{producto.categoria_icono} {producto.categoria}</span>}

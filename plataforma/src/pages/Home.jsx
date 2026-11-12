@@ -5,6 +5,7 @@ import { listarProductores } from '../services/perfiles.js';
 import ProductCard from '../components/ProductCard.jsx';
 import { SkeletonGrid } from '../components/Skeleton.jsx';
 import Icon from '../components/Icon.jsx';
+import useMediaQuery from '../hooks/useMediaQuery.js';
 
 export default function Home() {
   const [destacados, setDestacados] = useState(null);
@@ -12,9 +13,10 @@ export default function Home() {
   const [productores, setProductores] = useState([]);
   const [q, setQ] = useState('');
   const navigate = useNavigate();
+  const escritorio = useMediaQuery('(min-width: 721px)'); // en celular no se descargan las fotos grandes
 
   useEffect(() => {
-    listarCatalogo().then((d) => setDestacados(d.slice(0, 8))).catch(() => setDestacados([]));
+    listarCatalogo({ limite: 8 }).then(setDestacados).catch(() => setDestacados([]));
     listarCategorias().then(setCategorias).catch(console.error);
     listarProductores().then(setProductores).catch(console.error);
   }, []);
@@ -46,14 +48,16 @@ export default function Home() {
               <div><strong>0</strong><span>intermediarios</span></div>
             </div>
           </div>
+          {escritorio && (
           <div className="hero__art" aria-hidden="true">
-            <img className="hero__img hero__img--main" src={`${import.meta.env.BASE_URL}img/guasca-lagunas.webp`} alt="" />
-            <img className="hero__img hero__img--b" src={`${import.meta.env.BASE_URL}img/guasca-iglesia.webp`} alt="" />
+            <img className="hero__img hero__img--main" src={`${import.meta.env.BASE_URL}img/guasca-lagunas.webp`} alt="" width="1000" height="562" fetchpriority="high" />
+            <img className="hero__img hero__img--b" src={`${import.meta.env.BASE_URL}img/guasca-iglesia.webp`} alt="" width="260" height="260" decoding="async" />
             <div className="hero__badge">
               <Icon name="pin" size={22} />
               <div><strong>Guasca, Cundinamarca</strong><span>Lagunas de Siecha</span></div>
             </div>
           </div>
+          )}
         </div>
       </section>
 

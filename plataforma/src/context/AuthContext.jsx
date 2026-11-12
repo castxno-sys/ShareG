@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '../lib/supabase.js';
-import { Usuario } from '../models/index.js';
+import { obtenerPerfil } from '../services/perfiles.js';
 
 const AuthContext = createContext(null);
 
@@ -8,38 +8,36 @@ export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
   const [perfil, setPerfil] = useState(null);
   const [cargando, setCargando] = useState(true);
+  const idCargado = useRef(undefined); // evita volver a pedir el mismo perfil
 
-  const cargarPerfil = useCallback(async (userId) => {
-    if (!userId) return setPerfil(null);
-    const { data } = await supabase.from('perfiles').select('*').eq('id', userId).single();
-    setPerfil(Usuario.desdeFila(data)); // Productor o Comprador
+  const cargarPerfil = useCallback(async (userId, forzar = false) => {
+    if (!forzar && idCargado.current === (userId ?? null)) return;
+    idCargado.current = userId ?? null;
+    setPerfil(userId ? await obtenerPerfil(userId).catch(() => null) : null); // Productor o Comprador
   }, []);
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data }) => {
-      setSession(data.session);
-      await cargarPerfil(data.session?.user.id);
-      setCargando(false);
-    });
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+    // onAuthStateChange emite INITIAL_SESSION al cargar, así no hace falta getSession() aparte.
+    const { data } = supabase.auth.onAuthStateChange((evento, s) => {
       setSession(s);
-      // evitar llamadas a Supabase dentro del callback síncrono
-      setTimeout(() => cargarPerfil(s?.user.id), 0);
+      // Las llamadas a Supabase van fuera del callback (recomendación de supabase-js).
+      setTimeout(async () => {
+        await cargarPerfil(s?.user.id);
+        if (evento === 'INITIAL_SESSION') setCargando(false);
+      }, 0);
     });
-    return () => sub.subscription.unsubscribe();
+    return () => data.subscription.unsubscribe();
   }, [cargarPerfil]);
 
-  const iniciarSesion = (email, password) => supabase.auth.signInWithPassword({ email, password });
+  const iniciarSesion = useCallback((email, password) => supabase.auth.signInWithPassword({ email, password }), []);
+  const registrarse = useCallback((email, password, datos) => supabase.auth.signUp({
+    email, password,
+    options: { data: datos, emailRedirectTo: window.location.origin + import.meta.env.BASE_URL },
+  }), []);
+  const cerrarSesion = useCallback(() => supabase.auth.signOut(), []);
+  const recargarPerfil = useCallback(() => cargarPerfil(session?.user.id, true), [cargarPerfil, session]);
 
-  const registrarse = (email, password, datos) =>
-    supabase.auth.signUp({
-      email, password,
-      options: { data: datos, emailRedirectTo: window.location.origin + import.meta.env.BASE_URL },
-    });
-
-  const cerrarSesion = () => supabase.auth.signOut();
-
-  const valor = {
+  const valor = useMemo(() => ({
     session,
     user: session?.user ?? null,
     perfil,
@@ -48,10 +46,11 @@ export function AuthProvider({ children }) {
     iniciarSesion,
     registrarse,
     cerrarSesion,
-    recargarPerfil: () => cargarPerfil(session?.user.id),
-  };
+    recargarPerfil,
+  }), [session, perfil, cargando, iniciarSesion, registrarse, cerrarSesion, recargarPerfil]);
 
   return <AuthContext.Provider value={valor}>{children}</AuthContext.Provider>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);

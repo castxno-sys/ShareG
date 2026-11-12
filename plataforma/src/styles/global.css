@@ -151,6 +151,7 @@ code { background: var(--verde-100); padding: 1px 6px; border-radius: 6px; font-
 
 /* ===== Tarjetas de producto ===== */
 .card { background: var(--papel); border: 1px solid var(--borde); border-radius: var(--radio); box-shadow: var(--sombra-sm); }
+.grid.is-refreshing { opacity: .55; transition: opacity .2s; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 22px; }
 .product { overflow: hidden; display: flex; flex-direction: column; transition: transform .25s var(--ease), box-shadow .25s; }
 .product:hover { transform: translateY(-4px); box-shadow: var(--sombra-lg); }

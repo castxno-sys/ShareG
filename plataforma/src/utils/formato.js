@@ -12,8 +12,6 @@ export const ESTADOS = {
   cancelado: { label: 'Cancelado', clase: 'badge--rojo' },
 };
 
-export const SIGUIENTE_ESTADO = { pendiente: 'confirmado', confirmado: 'enviado', enviado: 'entregado' };
-
 export const UNIDADES = ['kg', 'libra', 'unidad', 'litro', 'caja', 'frasco', 'bulto', 'docena'];
 
 const PLURALES = { kg: 'kg', libra: 'libras', unidad: 'unidades', litro: 'litros', caja: 'cajas', frasco: 'frascos', bulto: 'bultos', docena: 'docenas' };
@@ -22,4 +20,21 @@ export const cantidadUnidad = (n, unidad) => {
   return `${num.toLocaleString('es-CO')} ${num === 1 ? unidad : PLURALES[unidad] ?? unidad}`;
 };
 
-export const IMG_DEFECTO = 'https://images.unsplash.com/photo-1560493676-04071c5f467b?w=1200&q=80&auto=format&fit=crop';
+
+export const IMG_DEFECTO = 'https://images.unsplash.com/photo-1560493676-04071c5f467b?w=800&q=80&auto=format&fit=crop';
+
+/** Pide a Unsplash la foto al ancho exacto que se va a mostrar (otras URLs quedan igual). */
+export function imagen(url, ancho) {
+  const u = url || IMG_DEFECTO;
+  if (!u.includes('images.unsplash.com')) return u;
+  const x = new URL(u);
+  x.searchParams.set('w', ancho);
+  x.searchParams.set('q', '75');
+  x.searchParams.set('auto', 'format');
+  x.searchParams.set('fit', 'crop');
+  return x.toString();
+}
+
+/** srcset con varios anchos para que el navegador elija según la pantalla. */
+export const srcset = (url, anchos) => anchos.map((w) => `${imagen(url, w)} ${w}w`).join(', ');
+

@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext.jsx';
 import { useUI } from '../context/UIContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
-import { pesos, IMG_DEFECTO } from '../utils/formato.js';
+import { pesos, imagen, srcset } from '../utils/formato.js';
 import Calificacion from './Calificacion.jsx';
 import Icon from './Icon.jsx';
 
-export default function ProductCard({ producto }) {
+// memo: la tarjeta solo se vuelve a dibujar si cambia su producto
+export default memo(function ProductCard({ producto }) {
   const { agregar } = useCart();
   const { toast } = useUI();
   const { user } = useAuth();
@@ -25,7 +26,8 @@ export default function ProductCard({ producto }) {
   return (
     <article className="card product">
       <Link to={`/producto/${producto.id}`} className="product__media">
-        <img src={producto.imagen_url || IMG_DEFECTO} alt={producto.nombre} loading="lazy" />
+        <img src={imagen(producto.imagen_url, 400)} srcSet={srcset(producto.imagen_url, [300, 400, 600, 800])}
+          sizes="(max-width: 720px) 50vw, 300px" width="400" height="300" alt={producto.nombre} loading="lazy" decoding="async" />
         {producto.categoria && <span className="chip chip--float">{producto.categoria_icono} {producto.categoria}</span>}
         {pocos && <span className="chip chip--warn">Quedan pocos</span>}
       </Link>
@@ -53,4 +55,4 @@ export default function ProductCard({ producto }) {
       </div>
     </article>
   );
-}
+});

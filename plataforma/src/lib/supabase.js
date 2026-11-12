@@ -7,3 +7,10 @@ const url = import.meta.env.VITE_SUPABASE_URL || 'https://alhgprlridksuvhhygxq.s
 const key = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_hgFbSPRbqJI7SYwFNFQAPQ_HTtLWswg';
 
 export const supabase = createClient(url, key);
+
+/** Ejecuta una consulta de Supabase y devuelve `data`, o lanza el error. */
+export async function ejecutar(consulta) {
+  const { data, error } = await consulta;
+  if (error) throw error;
+  return data;
+}

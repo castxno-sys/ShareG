@@ -74,7 +74,15 @@ La capa `src/models/` contiene las clases del dominio, usadas por los servicios 
 
 Diagramas en [`docs/`](docs/): `diagrama-clases.png` y `diagrama-arquitectura.png` (fuente Mermaid en los `.mmd`).
 
-Pruebas de los modelos: `npm test`
+Pruebas de los modelos: `npm test` · Revisión de código: `npm run lint` (ESLint, 0 problemas)
+
+## ⚡ Optimización
+
+- **Code splitting**: cada página se descarga solo al visitarla (`React.lazy`); catálogo y detalle se precargan cuando el navegador está libre.
+- **Caché de datos** (`src/lib/cache.js`): categorías, catálogo y productores se reutilizan y se invalidan al crear pedidos, reseñas o editar productos. Un recorrido típico pasa de 14 a 6 consultas.
+- **Imágenes a la medida**: `srcset` con anchos de 300–1100 px, `loading="lazy"`, y en celular no se descargan las fotos grandes de la portada.
+- **Menos renders**: contextos memorizados (`useMemo`/`useCallback`) y `React.memo` en las tarjetas.
+- Librerías en archivos aparte (`react`, `supabase`) para aprovechar la caché del navegador.
 
 ## ✨ Funcionalidades
 

@@ -4,7 +4,7 @@ import { useCart } from '../context/CartContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useUI } from '../context/UIContext.jsx';
 import { crearPedido } from '../services/pedidos.js';
-import { pesos, IMG_DEFECTO } from '../utils/formato.js';
+import { pesos, imagen } from '../utils/formato.js';
 import EmptyState from '../components/EmptyState.jsx';
 import Icon from '../components/Icon.jsx';
 
@@ -65,7 +65,7 @@ export default function Carrito() {
         <ul className="cart__list">
           {items.map((i) => (
             <li key={i.id} className="card cart__item">
-              <img src={i.imagen_url || IMG_DEFECTO} alt="" />
+              <img src={imagen(i.imagen_url, 168)} width="84" height="84" alt="" decoding="async" />
               <div className="cart__info">
                 <Link to={`/producto/${i.id}`}><strong>{i.nombre}</strong></Link>
                 <span className="muted">{i.productor_nombre}</span>

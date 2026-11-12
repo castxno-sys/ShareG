@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 const CartContext = createContext(null);
 const CLAVE = 'shareg_carrito';
@@ -10,18 +10,18 @@ const leer = () => {
 export function CartProvider({ children }) {
   const [items, setItems] = useState(leer);
   const [pulso, setPulso] = useState(false);
+  const timer = useRef();
 
   useEffect(() => {
     try { localStorage.setItem(CLAVE, JSON.stringify(items)); } catch { /* sin almacenamiento */ }
   }, [items]);
 
-  const agregar = (producto, cantidad = 1) => {
+  const agregar = useCallback((producto, cantidad = 1) => {
     setItems((prev) => {
       const existe = prev.find((i) => i.id === producto.id);
       if (existe) {
         return prev.map((i) =>
-          i.id === producto.id ? { ...i, cantidad: Math.min(i.cantidad + cantidad, producto.stock) } : i
-        );
+          i.id === producto.id ? { ...i, cantidad: Math.min(i.cantidad + cantidad, producto.stock) } : i);
       }
       return [...prev, {
         id: producto.id, nombre: producto.nombre, precio: Number(producto.precio),
@@ -30,24 +30,26 @@ export function CartProvider({ children }) {
       }];
     });
     setPulso(true);
-    setTimeout(() => setPulso(false), 600);
-  };
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setPulso(false), 600);
+  }, []);
 
   // delta: +1 / -1 (usa el valor más reciente, así los toques rápidos no se pierden)
-  const cambiarCantidad = (id, delta) =>
-    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, cantidad: Math.max(1, Math.min(i.cantidad + delta, i.stock)) } : i)));
+  const cambiarCantidad = useCallback((id, delta) =>
+    setItems((prev) => prev.map((i) =>
+      i.id === id ? { ...i, cantidad: Math.max(1, Math.min(i.cantidad + delta, i.stock)) } : i)), []);
 
-  const quitar = (id) => setItems((prev) => prev.filter((i) => i.id !== id));
-  const vaciar = () => setItems([]);
+  const quitar = useCallback((id) => setItems((prev) => prev.filter((i) => i.id !== id)), []);
+  const vaciar = useCallback(() => setItems([]), []);
 
-  const total = useMemo(() => items.reduce((s, i) => s + i.precio * i.cantidad, 0), [items]);
-  const cantidadTotal = items.length;
+  const valor = useMemo(() => ({
+    items, agregar, cambiarCantidad, quitar, vaciar, pulso,
+    total: items.reduce((s, i) => s + i.precio * i.cantidad, 0),
+    cantidadTotal: items.length,
+  }), [items, agregar, cambiarCantidad, quitar, vaciar, pulso]);
 
-  return (
-    <CartContext.Provider value={{ items, agregar, cambiarCantidad, quitar, vaciar, total, cantidadTotal, pulso }}>
-      {children}
-    </CartContext.Provider>
-  );
+  return <CartContext.Provider value={valor}>{children}</CartContext.Provider>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useCart = () => useContext(CartContext);

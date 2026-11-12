@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useRef, useState } from 'react';
+import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 
@@ -21,13 +21,16 @@ export function UIProvider({ children }) {
       setDialogo({ titulo, texto, boton, peligro });
     }), []);
 
-  const cerrar = (valor) => {
-    resolver.current?.(valor);
+  // Valor estable: mostrar un aviso no obliga a redibujar a todos los que usan useUI()
+  const valor = useMemo(() => ({ toast, confirmar }), [toast, confirmar]);
+
+  const cerrar = (respuesta) => {
+    resolver.current?.(respuesta);
     setDialogo(null);
   };
 
   return (
-    <UIContext.Provider value={{ toast, confirmar }}>
+    <UIContext.Provider value={valor}>
       {children}
 
       <div className="toasts" role="status" aria-live="polite">
@@ -58,4 +61,5 @@ export function UIProvider({ children }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useUI = () => useContext(UIContext);

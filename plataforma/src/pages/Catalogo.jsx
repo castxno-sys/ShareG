@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import useDebounce from '../hooks/useDebounce.js';
 import { useSearchParams } from 'react-router-dom';
 import { listarCatalogo, listarCategorias } from '../services/productos.js';
 import ProductCard from '../components/ProductCard.jsx';
@@ -8,26 +9,26 @@ import Icon from '../components/Icon.jsx';
 
 export default function Catalogo() {
   const [params, setParams] = useSearchParams();
-  const [productos, setProductos] = useState([]);
+  const [productos, setProductos] = useState(null); // null = primera carga
   const [categorias, setCategorias] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [busqueda, setBusqueda] = useState(params.get('q') || '');
 
   const categoria = params.get('categoria') || '';
   const orden = params.get('orden') || 'recientes';
+  const texto = useDebounce(busqueda, 300); // solo la escritura espera; filtros y orden son inmediatos
 
-  useEffect(() => { listarCategorias().then(setCategorias); }, []);
+  useEffect(() => { listarCategorias().then(setCategorias).catch(console.error); }, []);
 
   useEffect(() => {
+    let vigente = true; // descarta respuestas de búsquedas anteriores que lleguen tarde
     setCargando(true);
-    const t = setTimeout(() => {
-      listarCatalogo({ busqueda, categoria, orden })
-        .then(setProductos)
-        .catch(console.error)
-        .finally(() => setCargando(false));
-    }, 250);
-    return () => clearTimeout(t);
-  }, [busqueda, categoria, orden]);
+    listarCatalogo({ busqueda: texto, categoria, orden })
+      .then((lista) => { if (vigente) setProductos(lista); })
+      .catch(console.error)
+      .finally(() => { if (vigente) setCargando(false); });
+    return () => { vigente = false; };
+  }, [texto, categoria, orden]);
 
   const setParam = (k, v) => {
     const n = new URLSearchParams(params);
@@ -42,7 +43,7 @@ export default function Catalogo() {
       <header className="page__head">
         <span className="eyebrow">Mercado</span>
         <h1>{catActual ? `${catActual.icono} ${catActual.nombre}` : 'Catálogo'}</h1>
-        <p>{cargando ? 'Buscando en las fincas…' : `${productos.length} ${productos.length === 1 ? 'producto disponible' : 'productos disponibles'} en La Trinidad`}</p>
+        <p>{productos === null ? 'Buscando en las fincas…' : `${productos.length} ${productos.length === 1 ? 'producto disponible' : 'productos disponibles'} en La Trinidad`}</p>
       </header>
 
       <div className="toolbar">
@@ -69,12 +70,15 @@ export default function Catalogo() {
         ))}
       </div>
 
-      {cargando ? <SkeletonGrid /> : productos.length === 0 ? (
+      {productos === null ? <SkeletonGrid /> : productos.length === 0 ? (
         <EmptyState icono="🔎" titulo="No encontramos productos" texto="Prueba con otra búsqueda o categoría.">
           <button className="btn btn--outline" onClick={() => { setBusqueda(''); setParams({}); }}>Ver todo el catálogo</button>
         </EmptyState>
       ) : (
-        <div className="grid">{productos.map((p) => <ProductCard key={p.id} producto={p} />)}</div>
+        // Mientras se actualiza se dejan los resultados anteriores (sin parpadeo de esqueletos)
+        <div className={`grid ${cargando ? 'is-refreshing' : ''}`} aria-busy={cargando}>
+          {productos.map((p) => <ProductCard key={p.id} producto={p} />)}
+        </div>
       )}
     </div>
   );
