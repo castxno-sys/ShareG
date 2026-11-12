@@ -19,6 +19,9 @@ const PanelProductor = lazy(() => import('./pages/PanelProductor.jsx'));
 const ProductoForm = lazy(() => import('./pages/ProductoForm.jsx'));
 const Perfil = lazy(() => import('./pages/Perfil.jsx'));
 const Billetera = lazy(() => import('./pages/Billetera.jsx'));
+const Buscar = lazy(() => import('./pages/Buscar.jsx'));
+const Productores = lazy(() => import('./pages/Productores.jsx'));
+const ProductorPerfil = lazy(() => import('./pages/ProductorPerfil.jsx'));
 const NotFound = lazy(() => import('./pages/NotFound.jsx'));
 
 export default function App() {
@@ -38,6 +41,9 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/catalogo" element={<Catalogo />} />
             <Route path="/producto/:id" element={<ProductoDetalle />} />
+            <Route path="/buscar" element={<Buscar />} />
+            <Route path="/productores" element={<Productores />} />
+            <Route path="/productor/:id" element={<ProductorPerfil />} />
             <Route path="/carrito" element={<Carrito />} />
             <Route path="/login" element={<Login />} />
             <Route path="/registro" element={<Registro />} />

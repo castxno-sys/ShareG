@@ -43,6 +43,16 @@ export class Usuario extends Modelo {
 }
 
 export class Productor extends Usuario {
+  constructor(fila = {}) {
+    super(fila);
+    // Datos que llegan del buscador de vendedores (buscar_productores)
+    this.creado_en = fila.creado_en ?? null;
+    if (fila.productos_activos != null) this.totalProductos = Number(fila.productos_activos);
+    this.categorias = fila.categorias ?? [];
+    this.calificacion = Number(fila.calificacion ?? 0);
+    this.productosCoinciden = fila.productos_coinciden ?? [];
+  }
+
   get esProductor() { return true; }
   get etiquetaRol() { return 'Productor'; }
   puedeEditar(producto) { return producto.productor_id === this.id; }

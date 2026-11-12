@@ -1,0 +1,1 @@
+import{j as s}from"./index-CgQEL6c9.js";function c({icono:i="🌾",titulo:r,texto:e,children:n}){return s.jsxs("div",{className:"empty",children:[s.jsx("div",{className:"empty__icon",children:i}),s.jsx("h3",{children:r}),e&&s.jsx("p",{children:e}),n]})}export{c as E};

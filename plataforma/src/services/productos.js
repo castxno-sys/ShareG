@@ -10,20 +10,21 @@ const ORDENES = {
 };
 
 /** Limpia la caché de todo lo que muestra productos (después de cualquier cambio). */
-export const invalidarProductos = () => invalidar('catalogo', 'producto:', 'productores', 'estadisticas');
+export const invalidarProductos = () => invalidar('catalogo', 'producto:', 'productores', 'estadisticas', 'vendedor');
 
 /* ----- Lectura pública (con caché) ----- */
 export const listarCategorias = () =>
   enCache('categorias', 30 * MINUTO, async () =>
     Categoria.desdeFilas(await ejecutar(supabase.from('categorias').select('*').order('id'))));
 
-export function listarCatalogo({ busqueda = '', categoria = '', orden = 'recientes', limite = 0 } = {}) {
-  const clave = `catalogo:${busqueda.trim().toLowerCase()}|${categoria}|${orden}|${limite}`;
+export function listarCatalogo({ busqueda = '', categoria = '', orden = 'recientes', limite = 0, productor = '' } = {}) {
+  const clave = `catalogo:${busqueda.trim().toLowerCase()}|${categoria}|${orden}|${limite}|${productor}`;
   return enCache(clave, MINUTO, async () => {
     const [columna, asc] = ORDENES[orden] ?? ORDENES.recientes;
     let q = supabase.from('catalogo').select('*').order(columna, { ascending: asc });
     if (categoria) q = q.eq('categoria_slug', categoria);
     if (busqueda.trim()) q = q.ilike('nombre', `%${busqueda.trim()}%`);
+    if (productor) q = q.eq('productor_id', productor);
     if (limite) q = q.limit(limite);
     return Producto.desdeFilas(await ejecutar(q));
   });

@@ -13,7 +13,7 @@ export function AuthProvider({ children }) {
   const cargarPerfil = useCallback(async (userId, forzar = false) => {
     if (!forzar && idCargado.current === (userId ?? null)) return;
     idCargado.current = userId ?? null;
-    setPerfil(userId ? await obtenerPerfil(userId).catch(() => null) : null); // Productor o Comprador
+    setPerfil(userId ? await obtenerPerfil().catch(() => null) : null); // Productor o Comprador
   }, []);
 
   useEffect(() => {

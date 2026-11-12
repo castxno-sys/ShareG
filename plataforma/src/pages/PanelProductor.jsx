@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useUI } from '../context/UIContext.jsx';
@@ -6,11 +6,13 @@ import { useBilletera } from '../context/BilleteraContext.jsx';
 import { misProductos, eliminarProducto, guardarProducto } from '../services/productos.js';
 import { pedidosRecibidos, actualizarEstado, resumenProductor } from '../services/pedidos.js';
 import { listarNuevosCompradores } from '../services/perfiles.js';
-import { pesos, fecha, ESTADOS, imagen, haceCuanto } from '../utils/formato.js';
+import { pesos, fecha, ESTADOS, imagen } from '../utils/formato.js';
 import Loader from '../components/Loader.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 import EstadoPedido from '../components/EstadoPedido.jsx';
 import Icon from '../components/Icon.jsx';
+import CompradorCard from '../components/CompradorCard.jsx';
+import useDebounce from '../hooks/useDebounce.js';
 
 const ACCION = { pendiente: 'Confirmar pedido', confirmado: 'Marcar como enviado', enviado: 'Marcar como entregado' };
 
@@ -29,7 +31,7 @@ export default function PanelProductor() {
   // Las tres consultas van en paralelo
   const cargar = useCallback(async () => {
     const [pr, pe, rs, co] = await Promise.all([
-      misProductos(user.id), pedidosRecibidos(user.id), resumenProductor(), listarNuevosCompradores(),
+      misProductos(user.id), pedidosRecibidos(user.id), resumenProductor(), listarNuevosCompradores(50),
     ]);
     setProductos(pr); setPedidos(pe); setResumen(rs); setCompradores(co);
     setCargando(false);
@@ -185,29 +187,48 @@ export default function PanelProductor() {
         </div>
       ))}
 
-      {tab === 'compradores' && (compradores.length === 0 ? (
-        <EmptyState icono="🛒" titulo="Aún no hay compradores" texto="Cuando alguien cree su cuenta de comprador aparecerá aquí." />
-      ) : (
-        <>
-          <p className="muted panel-note">Todas las personas que se han registrado como compradoras, de la más reciente a la más antigua. Solo ves cuánto te han comprado a ti.</p>
-          <div className="buyers">
-            {compradores.map((c) => (
-              <article key={c.id} className={`card buyer ${c.esNuevo ? 'buyer--new' : ''}`}>
-                <div className="avatar avatar--lg">{c.inicial}</div>
-                <div className="buyer__info">
-                  <strong>{c.nombreVisible} {c.esNuevo && <span className="tag-new">Nuevo</span>}</strong>
-                  <span className="muted"><Icon name="pin" size={13} /> {c.vereda || 'Sin vereda'} · se unió {haceCuanto(c.creado_en)} ({fecha(c.creado_en)})</span>
-                  {c.teHaComprado ? (
-                    <span className="buyer__stat buyer__stat--ok"><Icon name="check" size={14} /> Te ha comprado {c.comprasConmigo} {c.comprasConmigo === 1 ? 'vez' : 'veces'} · {pesos(c.totalConmigo)}</span>
-                  ) : (
-                    <span className="buyer__stat">{c.pedidos > 0 ? `Ha hecho ${c.pedidos} ${c.pedidos === 1 ? 'pedido' : 'pedidos'} a otras fincas` : 'Todavía no ha hecho pedidos'}</span>
-                  )}
-                </div>
-              </article>
-            ))}
-          </div>
-        </>
-      ))}
+      {tab === 'compradores' && <CompradoresTab iniciales={compradores} />}
     </div>
+  );
+}
+
+/** Pestaña de compradores con buscador (en el servidor) y filtros rápidos. */
+function CompradoresTab({ iniciales }) {
+  const [texto, setTexto] = useState('');
+  const [filtro, setFiltro] = useState('todos');
+  const q = useDebounce(texto.trim(), 300);
+  const [encontrados, setEncontrados] = useState(null);
+
+  useEffect(() => {
+    if (!q) { setEncontrados(null); return undefined; }
+    let vigente = true;
+    listarNuevosCompradores(50, q).then((r) => vigente && setEncontrados(r)).catch(() => vigente && setEncontrados([]));
+    return () => { vigente = false; };
+  }, [q]);
+
+  const base = encontrados ?? iniciales;
+  const lista = useMemo(() => base.filter((c) =>
+    filtro === 'nuevos' ? c.esNuevo : filtro === 'clientes' ? c.teHaComprado : true), [base, filtro]);
+  const cuenta = { todos: base.length, nuevos: base.filter((c) => c.esNuevo).length, clientes: base.filter((c) => c.teHaComprado).length };
+
+  return (
+    <>
+      <p className="muted panel-note">Todas las personas registradas como compradoras. Solo ves cuánto te han comprado a ti; su teléfono aparece en los pedidos que te hagan.</p>
+      <div className="field-icon toolbar__search panel-search">
+        <Icon name="search" />
+        <input className="input" value={texto} onChange={(e) => setTexto(e.target.value)} placeholder="Buscar comprador por nombre o vereda" aria-label="Buscar compradores" />
+        {texto && <button className="field-icon__clear" onClick={() => setTexto('')} aria-label="Limpiar"><Icon name="x" size={16} /></button>}
+      </div>
+      <div className="chips">
+        {[['todos', 'Todos'], ['nuevos', 'Nuevos'], ['clientes', 'Te han comprado']].map(([k, t]) => (
+          <button key={k} className={`chip ${filtro === k ? 'is-active' : ''}`} onClick={() => setFiltro(k)}>{t} <span className="chip__n">{cuenta[k]}</span></button>
+        ))}
+      </div>
+      {lista.length === 0 ? (
+        <EmptyState icono="🛒" titulo={q ? `Ningún comprador coincide con “${q}”` : 'Aún no hay compradores aquí'} texto={q ? 'Prueba con otro nombre o vereda.' : 'Cuando alguien cree su cuenta de comprador aparecerá aquí.'} />
+      ) : (
+        <div className="buyers">{lista.map((c) => <CompradorCard key={c.id} comprador={c} />)}</div>
+      )}
+    </>
   );
 }

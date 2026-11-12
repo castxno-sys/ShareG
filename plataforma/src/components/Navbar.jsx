@@ -25,6 +25,13 @@ export default function Navbar() {
     toast('Sesión cerrada');
   };
 
+  const [q, setQ] = useState('');
+  const buscar = (e) => {
+    e.preventDefault();
+    navigate(q.trim() ? `/buscar?q=${encodeURIComponent(q.trim())}` : '/buscar');
+    setQ('');
+  };
+
   const inicial = perfil?.inicial ?? (user?.email || '?')[0].toUpperCase();
 
   return (
@@ -34,6 +41,7 @@ export default function Navbar() {
 
         <nav className={`navbar__links ${abierto ? 'is-open' : ''}`}>
           <NavLink to="/catalogo">Catálogo</NavLink>
+          <NavLink to="/productores">Productores</NavLink>
           {user && <NavLink to="/mis-pedidos">Mis pedidos</NavLink>}
           {user && <NavLink to="/billetera" className="navbar__mobile-only">Billetera</NavLink>}
           {esProductor && <NavLink to="/panel">Mi finca</NavLink>}
@@ -50,7 +58,13 @@ export default function Navbar() {
           )}
         </nav>
 
+        <form className="navbar__search navbar__desk-only" role="search" onSubmit={buscar}>
+          <Icon name="search" size={18} />
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar productos o personas" aria-label="Buscar" />
+        </form>
+
         <div className="navbar__actions">
+          <Link to="/buscar" className="icon-btn navbar__mobile-search" aria-label="Buscar"><Icon name="search" size={22} /></Link>
           {user && billetera && (
             <Link to="/billetera" className="wallet-chip" title="Mi billetera" aria-label={`Saldo ${pesos(billetera.saldo)}`}>
               <Icon name="wallet" size={18} /> <span>{pesos(billetera.saldo)}</span>

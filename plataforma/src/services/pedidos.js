@@ -22,10 +22,18 @@ export async function misPedidos(userId) {
 }
 
 export async function pedidosRecibidos(productorId) {
-  const filas = await ejecutar(supabase
-    .from('pedido_items')
-    .select('*, pedido:pedidos(id, estado, creado_en, direccion_entrega, notas, comprador:perfiles(nombre, telefono))')
-    .eq('productor_id', productorId));
+  // El teléfono no es público: llega aparte, solo de quienes le han pedido a este productor
+  const [filas, contactos] = await Promise.all([
+    ejecutar(supabase
+      .from('pedido_items')
+      .select('*, pedido:pedidos(id, estado, creado_en, direccion_entrega, notas, comprador_id, comprador:perfiles(nombre))')
+      .eq('productor_id', productorId)),
+    ejecutar(supabase.rpc('contactos_de_mis_pedidos')),
+  ]);
+  const telefonos = new Map(contactos.map((c) => [c.comprador_id, c.telefono]));
+  for (const f of filas) {
+    if (f.pedido?.comprador) f.pedido.comprador.telefono = telefonos.get(f.pedido.comprador_id) ?? null;
+  }
   return Pedido.agruparPorPedido(filas);
 }
 

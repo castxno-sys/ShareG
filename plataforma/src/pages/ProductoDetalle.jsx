@@ -102,14 +102,15 @@ export default function ProductoDetalle() {
 
           {!esMio && comprar()}
 
-          <div className="farmer card">
+          <Link to={`/productor/${producto.productor_id}`} className="farmer card farmer--link">
             <div className="avatar avatar--lg">{producto.productor_nombre[0]}</div>
             <div>
               <span className="muted">Cultivado por</span>
               <strong>{producto.productor_nombre}</strong>
               <span className="muted"><Icon name="pin" size={13} /> Vereda {producto.productor_vereda}, Guasca</span>
             </div>
-          </div>
+            <span className="farmer__more">Ver su finca <Icon name="arrowRight" size={16} /></span>
+          </Link>
         </div>
       </div>
 

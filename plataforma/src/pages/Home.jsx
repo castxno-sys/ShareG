@@ -5,6 +5,7 @@ import { listarProductores, estadisticasPublicas } from '../services/perfiles.js
 import { haceCuanto } from '../utils/formato.js';
 import ProductCard from '../components/ProductCard.jsx';
 import { SkeletonGrid } from '../components/Skeleton.jsx';
+import VendedorCard from '../components/VendedorCard.jsx';
 import Icon from '../components/Icon.jsx';
 import useMediaQuery from '../hooks/useMediaQuery.js';
 
@@ -116,19 +117,10 @@ export default function Home() {
               <h2>Conoce a quienes cultivan</h2>
               <p className="muted">Cada compra llega completa a estas familias.</p>
             </div>
+            <Link to="/productores" className="link">Ver todas y buscar <Icon name="arrowRight" size={16} /></Link>
           </div>
           <div className="farmers">
-            {productores.map((p) => (
-              <article key={p.id} className="card farmer-card">
-                <div className="avatar avatar--lg">{p.inicial}</div>
-                <div>
-                  <h3>{p.nombreVisible}</h3>
-                  <span className="muted"><Icon name="pin" size={13} /> Vereda {p.vereda}</span>
-                  {p.descripcion && <p>{p.descripcion}</p>}
-                  <span className="chip chip--soft">{p.totalProductos} productos</span>
-                </div>
-              </article>
-            ))}
+            {productores.map((p) => <VendedorCard key={p.id} productor={p} />)}
           </div>
         </section>
       )}
