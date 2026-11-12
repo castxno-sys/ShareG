@@ -1,7 +1,7 @@
 flowchart TB
   subgraph UI["🖥️ Presentación — React (src/pages, src/components)"]
     direction LR
-    P1["Páginas<br/>Home · Catalogo · ProductoDetalle<br/>Carrito · MisPedidos · PanelProductor<br/>ProductoForm · Perfil · Login · Registro"]
+    P1["Páginas<br/>Home · Catalogo · ProductoDetalle<br/>Carrito · MisPedidos · PanelProductor<br/>ProductoForm · Perfil · Billetera · Login · Registro"]
     P2["Componentes reutilizables<br/>Navbar · ProductCard · EstadoPedido<br/>Calificacion · Skeleton · Icon · Footer"]
   end
   subgraph EST["🔁 Estado global — Context API (src/context)"]
@@ -9,15 +9,17 @@ flowchart TB
     C1["AuthContext<br/>sesión + perfil"]
     C2["CartContext<br/>carrito (localStorage)"]
     C3["UIContext<br/>toasts + modal"]
+    C4["BilleteraContext<br/>saldo"]
   end
   subgraph SRV["🔌 Servicios — acceso a datos (src/services)"]
     direction LR
     S1["productos.js"]
     S2["pedidos.js"]
     S3["perfiles.js"]
+    S4["billetera.js"]
   end
   subgraph MOD["🧩 Modelos POO (src/models)"]
-    M1["Modelo ▸ Usuario ▸ Productor / Comprador<br/>Producto · Categoria · Pedido · PedidoItem · Resena"]
+    M1["Modelo ▸ Usuario ▸ Productor / Comprador<br/>Producto · Categoria · Pedido · PedidoItem · Resena<br/>Movimiento · Billetera"]
   end
   subgraph BE["☁️ Supabase"]
     direction LR

@@ -83,6 +83,7 @@ classDiagram
     +cancelado : boolean
     +cerrado : boolean
     +siguienteEstado : string
+    +estadoPago : string
     +puedeCancelarComprador : boolean
   }
 
@@ -107,12 +108,42 @@ classDiagram
     +esDe(usuarioId) boolean
   }
 
+  class Movimiento {
+    +METODOS = [Nequi, PSE, Tarjeta, Daviplata]$
+    +TIPOS = recarga · pago · reembolso · cobro$
+    +usuario_id
+    +tipo : string
+    +monto : number
+    +pedido_id
+    +metodo : string
+    +creado_en : Date
+    +esIngreso : boolean
+    +etiqueta : string
+    +icono : string
+    +codigoPedido : string
+  }
+
+  class Billetera {
+    +RECARGA_MIN = 1000$
+    +RECARGA_MAX = 2000000$
+    +MONTOS_RAPIDOS$
+    +saldo : number
+    +recargado : number
+    +gastado : number
+    +recaudado : number
+    +movimientos : Movimiento[]
+    +validarRecarga(monto)$ void
+    +alcanzaPara(total) boolean
+    +faltaPara(total) number
+  }
+
   Modelo <|-- Usuario
   Modelo <|-- Categoria
   Modelo <|-- Producto
   Modelo <|-- Pedido
   Modelo <|-- PedidoItem
   Modelo <|-- Resena
+  Modelo <|-- Movimiento
   Usuario <|-- Productor
   Usuario <|-- Comprador
 
@@ -123,3 +154,6 @@ classDiagram
   PedidoItem "0..*" --> "1" Producto : refiere a
   Producto "1" --> "0..*" Resena : recibe
   Usuario "1" --> "0..*" Resena : escribe
+  Usuario "1" --> "1" Billetera : tiene
+  Billetera "1" o-- "0..*" Movimiento : registra
+  Pedido "1" --> "1..*" Movimiento : genera pago / reembolso / cobro

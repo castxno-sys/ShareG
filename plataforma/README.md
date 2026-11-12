@@ -74,7 +74,14 @@ La capa `src/models/` contiene las clases del dominio, usadas por los servicios 
 
 Diagramas en [`docs/`](docs/): `diagrama-clases.png` y `diagrama-arquitectura.png` (fuente Mermaid en los `.mmd`).
 
-Pruebas de los modelos: `npm test` · Revisión de código: `npm run lint` (ESLint, 0 problemas)
+Pruebas de los modelos (15): `npm test` · Revisión de código: `npm run lint` (ESLint, 0 problemas)
+
+## 💰 Billetera de prueba
+
+- El comprador **recarga saldo** (Nequi, PSE, Tarjeta o Daviplata, simulado: no se cobra dinero real) y **paga sus pedidos con saldo**.
+- Si un pedido se cancela, el dinero se **reembolsa**; cuando el productor lo marca como **entregado**, recibe su parte (**dinero recaudado**).
+- **Mis pedidos** guarda el historial con total gastado, filtros por estado y **Volver a pedir**.
+- Base de datos: tabla `movimientos` + funciones `recargar_saldo`, `resumen_billetera` y cambios en `crear_pedido` / `actualizar_estado_pedido` (`supabase/migrations/006_billetera.sql`).
 
 ## ⚡ Optimización
 
