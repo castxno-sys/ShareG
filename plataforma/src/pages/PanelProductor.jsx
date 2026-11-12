@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useUI } from '../context/UIContext.jsx';
+import { useBilletera } from '../context/BilleteraContext.jsx';
 import { misProductos, eliminarProducto, guardarProducto } from '../services/productos.js';
 import { pedidosRecibidos, actualizarEstado, resumenProductor } from '../services/pedidos.js';
 import { pesos, fecha, ESTADOS, imagen } from '../utils/formato.js';
@@ -15,6 +16,7 @@ const ACCION = { pendiente: 'Confirmar pedido', confirmado: 'Marcar como enviado
 export default function PanelProductor() {
   const { user, perfil } = useAuth();
   const { toast, confirmar } = useUI();
+  const { actualizar: actualizarBilletera } = useBilletera();
   const [tab, setTab] = useState('pedidos');
   const [filtro, setFiltro] = useState('activos');
   const [productos, setProductos] = useState([]);
@@ -32,7 +34,12 @@ export default function PanelProductor() {
 
   const avanzar = async (p) => {
     const sig = p.siguienteEstado;
-    try { await actualizarEstado(p.id, sig); toast(`Pedido ${ESTADOS[sig].label.toLowerCase()}`); cargar(); }
+    try {
+      await actualizarEstado(p.id, sig);
+      toast(sig === 'entregado' ? `Pedido entregado: recibiste ${pesos(p.total)}` : `Pedido ${ESTADOS[sig].label.toLowerCase()}`);
+      cargar();
+      if (sig === 'entregado') actualizarBilletera();
+    }
     catch (e) { toast(e.message, { tipo: 'error' }); }
   };
   const cancelar = async (p) => {
@@ -54,8 +61,8 @@ export default function PanelProductor() {
   if (cargando) return <Loader />;
 
   const stats = [
-    ['Ventas', pesos(resumen.ventas), 'coins', 'verde'],
-    ['Pedidos', resumen.pedidos, 'package', 'azul'],
+    ['Dinero recaudado', pesos(resumen.recaudado), 'coins', 'verde'],
+    ['Por cobrar', pesos(resumen.por_cobrar), 'wallet', 'azul'],
     ['Por confirmar', resumen.pendientes, 'clock', 'amarillo'],
     ['Productos activos', resumen.productos_activos, 'sprout', 'terracota'],
   ];

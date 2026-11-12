@@ -5,12 +5,15 @@ import { useCart } from '../context/CartContext.jsx';
 import Logo from './Logo.jsx';
 import Icon from './Icon.jsx';
 import { useUI } from '../context/UIContext.jsx';
+import { useBilletera } from '../context/BilleteraContext.jsx';
+import { pesos } from '../utils/formato.js';
 
 export default function Navbar() {
   const { user, perfil, esProductor, cerrarSesion } = useAuth();
   const { cantidadTotal, pulso } = useCart();
   const [abierto, setAbierto] = useState(false);
   const { toast } = useUI();
+  const { billetera } = useBilletera();
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -32,6 +35,7 @@ export default function Navbar() {
         <nav className={`navbar__links ${abierto ? 'is-open' : ''}`}>
           <NavLink to="/catalogo">Catálogo</NavLink>
           {user && <NavLink to="/mis-pedidos">Mis pedidos</NavLink>}
+          {user && <NavLink to="/billetera" className="navbar__mobile-only">Billetera</NavLink>}
           {esProductor && <NavLink to="/panel">Mi finca</NavLink>}
           {user ? (
             <>
@@ -47,6 +51,11 @@ export default function Navbar() {
         </nav>
 
         <div className="navbar__actions">
+          {user && billetera && (
+            <Link to="/billetera" className="wallet-chip" title="Mi billetera" aria-label={`Saldo ${pesos(billetera.saldo)}`}>
+              <Icon name="wallet" size={18} /> <span>{pesos(billetera.saldo)}</span>
+            </Link>
+          )}
           <Link to="/carrito" className={`icon-btn navbar__cart ${pulso ? 'is-pulse' : ''}`} aria-label={`Carrito, ${cantidadTotal} productos`}>
             <Icon name="cart" size={22} />
             {cantidadTotal > 0 && <span className="navbar__count">{cantidadTotal}</span>}

@@ -43,6 +43,9 @@ export default class Pedido extends Modelo {
     return Pedido.FLUJO[Pedido.FLUJO.indexOf(this.estado) + 1] ?? null;
   }
 
+  /** Cómo quedó el dinero del pedido. */
+  get estadoPago() { return this.cancelado ? 'Reembolsado a tu saldo' : 'Pagado con saldo'; }
+
   /** El comprador solo puede cancelar mientras el productor no lo haya confirmado. */
   get puedeCancelarComprador() { return this.estado === 'pendiente'; }
 }

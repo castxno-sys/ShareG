@@ -18,6 +18,7 @@ const MisPedidos = lazy(() => import('./pages/MisPedidos.jsx'));
 const PanelProductor = lazy(() => import('./pages/PanelProductor.jsx'));
 const ProductoForm = lazy(() => import('./pages/ProductoForm.jsx'));
 const Perfil = lazy(() => import('./pages/Perfil.jsx'));
+const Billetera = lazy(() => import('./pages/Billetera.jsx'));
 const NotFound = lazy(() => import('./pages/NotFound.jsx'));
 
 export default function App() {
@@ -42,6 +43,7 @@ export default function App() {
             <Route path="/registro" element={<Registro />} />
             <Route path="/mis-pedidos" element={<ProtectedRoute><MisPedidos /></ProtectedRoute>} />
             <Route path="/perfil" element={<ProtectedRoute><Perfil /></ProtectedRoute>} />
+            <Route path="/billetera" element={<ProtectedRoute><Billetera /></ProtectedRoute>} />
             <Route path="/panel" element={<ProtectedRoute rol="productor"><PanelProductor /></ProtectedRoute>} />
             <Route path="/panel/producto/nuevo" element={<ProtectedRoute rol="productor"><ProductoForm /></ProtectedRoute>} />
             <Route path="/panel/producto/:id" element={<ProtectedRoute rol="productor"><ProductoForm /></ProtectedRoute>} />

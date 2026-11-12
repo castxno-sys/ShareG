@@ -1,7 +1,7 @@
 // Pruebas de los modelos del dominio (POO). Ejecutar: npm test
 import assert from 'node:assert/strict';
 const M = await import('../src/models/index.js');
-const { Modelo, Usuario, Productor, Comprador, Producto, Pedido, Resena, Categoria } = M;
+const { Modelo, Usuario, Productor, Comprador, Producto, Pedido, Resena, Categoria, Movimiento, Billetera } = M;
 let n=0; const t=(name,fn)=>{fn();n++;console.log('✓',name)};
 t('Modelo es abstracta', ()=>assert.throws(()=>new Modelo(1)));
 t('Usuario es abstracta', ()=>assert.throws(()=>new Usuario({id:1})));
@@ -18,4 +18,7 @@ t('Pedido.agruparPorPedido + composición', ()=>{assert.equal(peds.length,2);ass
 t('Pedido flujo de estados', ()=>{assert.equal(peds[1].siguienteEstado,'confirmado');assert.equal(peds[0].siguienteEstado,'entregado');assert.equal(new Pedido({id:'x',estado:'entregado'}).siguienteEstado,null);assert.equal(new Pedido({id:'x',estado:'cancelado'}).cerrado,true);assert.ok(peds[1].puedeCancelarComprador);assert.ok(!peds[0].puedeCancelarComprador);});
 t('Resena valida 1..5', ()=>{assert.throws(()=>Resena.validar({calificacion:6}));assert.equal(new Resena({id:'r',calificacion:4,autor_id:'u'}).autorNombre,'Anónimo');});
 t('Categoria.etiqueta', ()=>assert.equal(new Categoria({id:1,nombre:'Frutas',icono:'🍓',slug:'frutas'}).etiqueta,'🍓 Frutas'));
+t('Movimiento: entrada/salida, etiqueta y pedido', ()=>{const r=Movimiento.desdeFila({id:'m',tipo:'recarga',monto:'50000',metodo:'Nequi'});const p=new Movimiento({id:'n',tipo:'pago',monto:-28000,pedido_id:'abcdef123456'});assert.ok(r instanceof Modelo);assert.ok(r.esIngreso);assert.ok(!p.esIngreso);assert.equal(r.etiqueta,'Recarga de saldo');assert.equal(p.codigoPedido,'#ABCDEF12');});
+t('Billetera: alcanza, falta (redondeado a miles) y validar recarga', ()=>{const b=new Billetera({saldo:'20000',recargado:50000});assert.ok(b.alcanzaPara(20000));assert.ok(!b.alcanzaPara(20001));assert.equal(b.faltaPara(28500),9000);assert.equal(b.faltaPara(20200),1000);assert.equal(b.faltaPara(100),0);assert.throws(()=>Billetera.validarRecarga(500));assert.throws(()=>Billetera.validarRecarga(3_000_000));Billetera.validarRecarga(50000);});
+t('Pedido.estadoPago', ()=>{assert.equal(new Pedido({id:'x',estado:'cancelado'}).estadoPago,'Reembolsado a tu saldo');assert.equal(new Pedido({id:'x',estado:'enviado'}).estadoPago,'Pagado con saldo');});
 console.log(`\n${n} pruebas OK`);

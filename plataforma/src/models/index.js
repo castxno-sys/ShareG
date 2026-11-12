@@ -6,3 +6,5 @@ export { default as Producto } from './Producto.js';
 export { default as Pedido } from './Pedido.js';
 export { default as PedidoItem } from './PedidoItem.js';
 export { default as Resena } from './Resena.js';
+export { default as Movimiento } from './Movimiento.js';
+export { default as Billetera } from './Billetera.js';

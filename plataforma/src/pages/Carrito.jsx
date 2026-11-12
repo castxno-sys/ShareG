@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useUI } from '../context/UIContext.jsx';
+import { useBilletera } from '../context/BilleteraContext.jsx';
 import { crearPedido } from '../services/pedidos.js';
 import { pesos, imagen } from '../utils/formato.js';
 import EmptyState from '../components/EmptyState.jsx';
@@ -18,6 +19,7 @@ export default function Carrito() {
   const { items, cambiarCantidad, quitar, vaciar, total } = useCart();
   const { user } = useAuth();
   const { toast } = useUI();
+  const { billetera, actualizar } = useBilletera();
   const navigate = useNavigate();
   const [entrega, setEntrega] = useState(leerEntrega);
   const [enviando, setEnviando] = useState(false);
@@ -39,6 +41,7 @@ export default function Carrito() {
   }
 
   const fincas = new Set(items.map((i) => i.productor_nombre)).size;
+  const falta = user && billetera ? billetera.faltaPara(total) : 0;
 
   const confirmar = async (e) => {
     e.preventDefault();
@@ -47,6 +50,7 @@ export default function Carrito() {
     try {
       await crearPedido(items, entrega.direccion, entrega.notas);
       vaciar();
+      actualizar(); // descuenta el pago del saldo mostrado
       setEntrega((x) => ({ ...x, notas: '' }));
       toast('¡Pedido enviado a los productores!');
       navigate('/mis-pedidos');
@@ -91,6 +95,18 @@ export default function Carrito() {
           <div className="row"><span>Subtotal</span><span>{pesos(total)}</span></div>
           <div className="row"><span>Envío</span><span className="muted">Se acuerda con cada finca</span></div>
           <div className="row row--total"><span>Total</span><span>{pesos(total)}</span></div>
+          {user && billetera && (
+            <div className={`pay ${falta ? 'pay--low' : ''}`}>
+              <Icon name="wallet" size={20} />
+              <div>
+                <span>Pagas con tu saldo</span>
+                <strong>{pesos(billetera.saldo)} disponibles</strong>
+                {!falta && <small>Te quedarán {pesos(billetera.saldo - total)}</small>}
+                {falta > 0 && <small>Te faltan {pesos(total - billetera.saldo)}</small>}
+              </div>
+              {falta > 0 && <Link to={`/billetera?monto=${falta}`} className="btn btn--accent btn--sm">Recargar</Link>}
+            </div>
+          )}
           <label>Dirección de entrega
             <div className="field-icon">
               <Icon name="pin" />
@@ -103,7 +119,7 @@ export default function Carrito() {
               onChange={(e) => setEntrega({ ...entrega, notas: e.target.value })} placeholder="Horario, indicaciones…" />
           </label>
           {error && <p className="alert alert--error"><Icon name="alert" size={18} /> {error}</p>}
-          <button className="btn btn--primary btn--block btn--lg" disabled={enviando}>
+          <button className="btn btn--primary btn--block btn--lg" disabled={enviando || falta > 0}>
             {enviando ? 'Enviando…' : user ? <>Confirmar pedido · {pesos(total)}</> : 'Ingresa para confirmar'}
           </button>
           <p className="muted center small"><Icon name="heart" size={14} /> El 100% del valor llega a los productores.</p>

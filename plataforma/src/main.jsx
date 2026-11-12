@@ -7,6 +7,7 @@ const Router = import.meta.env.VITE_ROUTER === 'hash' ? HashRouter : BrowserRout
 import App from './App.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { CartProvider } from './context/CartContext.jsx';
+import { BilleteraProvider } from './context/BilleteraContext.jsx';
 import { UIProvider } from './context/UIContext.jsx';
 import './styles/global.css';
 
@@ -15,9 +16,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <Router basename={import.meta.env.VITE_ROUTER === 'hash' ? undefined : import.meta.env.BASE_URL} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <UIProvider>
         <AuthProvider>
-          <CartProvider>
-            <App />
-          </CartProvider>
+          <BilleteraProvider>
+            <CartProvider>
+              <App />
+            </CartProvider>
+          </BilleteraProvider>
         </AuthProvider>
       </UIProvider>
     </Router>
